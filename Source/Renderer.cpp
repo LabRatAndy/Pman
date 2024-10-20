@@ -1,0 +1,155 @@
+#include "Renderer.h"
+#include "SpriteList.h"
+#include "Tile.h"
+#include "Assert.h"
+#include <raylib.h>
+#include <iostream>
+
+namespace Pman
+{
+	Renderer::Renderer(uint32_t width, uint32_t height) : m_Width(width), m_Height(height)
+	{
+		m_Sprites = new SpriteList(MAX_SPTITES);
+		m_SpriteCount = 0;
+	}
+	Renderer::~Renderer()
+	{
+		delete m_Sprites;
+	}
+	void Renderer::Initialise(uint32_t FPS)
+	{
+		SetTargetFPS(FPS);
+	}
+	void Renderer::RenderTile(const Tile& tile)
+	{
+		switch (tile.GetTileType())
+		{
+		case TileType::Door:
+			RenderRectangle(tile.GetAbsoluteXPosition(), tile.GetAbsoluteYPosition(), tile.GetTileSize(), { 255,0,255,255 });
+			break;
+		case TileType::Wall:
+			RenderRectangle(tile.GetAbsoluteXPosition(), tile.GetAbsoluteYPosition(), tile.GetTileSize(), { 0,121,241,255 });
+			break;
+		case TileType::Gem:
+		case TileType::PowerPellet:
+			RenderSprite(tile.GetSprite(), tile.GetAbsoluteXPosition(), tile.GetAbsoluteYPosition(), tile.GetTileSize());
+			break;
+		}
+	}
+	void Renderer::RenderSprite(const Sprite* sprite, uint32_t xpos, uint32_t ypos, uint32_t tilesize)
+	{
+		ASSERT(sprite, "Sprite cannot be nullptr");
+		Texture2D& texture = m_Sprites->Sprites[sprite->SpriteID];
+		DrawTexture(texture, xpos, ypos, WHITE);
+		
+	}
+	void Renderer::RenderRectangle(uint32_t xpos, uint32_t ypos, uint32_t tilesize, Vec4<uint8_t> colour)
+	{
+		DrawRectangle(xpos, ypos, tilesize, tilesize, { colour.X,colour.Y,colour.Z,colour.W });
+	}
+	void Renderer::RenderTest()
+	{
+		DrawText("Hello", 10, 10, 20, RED);
+	}
+	void Renderer::Clear(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+	{
+		ClearBackground({ red,green,blue,alpha });
+	}
+	void Renderer::BeginFrame()
+	{
+		BeginDrawing();
+	}
+	void Renderer::EndFrame()
+	{
+		EndDrawing();
+	}
+	Sprite* Renderer::LoadSprite(const std::filesystem::path& filename, SpriteType type)
+	{
+		if (!std::filesystem::exists(filename))
+		{
+			std::cerr << "The Sprite file " << filename << " does not exist!" << std::endl;
+			return nullptr;
+		}
+		if (m_SpriteCount > MAX_SPTITES)
+		{
+			std::cerr << "Maximum sprite count of 10 has been exceeded by sprite file " << filename << std::endl;
+			return nullptr;
+		}
+		if (type == SpriteType::None)
+		{
+			std::cerr << "invalid sprite type" << std::endl;
+			return nullptr;
+		}
+		std::string pathstring = filename.string();
+		Image image = LoadImage(pathstring.c_str());
+		size_t buffersize = image.width * image.height;
+		uint32_t* imagebuffer = new uint32_t[buffersize];
+		uint8_t* imagedata = (uint8_t*)image.data;
+		if (image.format == PIXELFORMAT_UNCOMPRESSED_R8G8B8A8)
+		{
+			//RGBA
+			for (size_t i = 0; i < buffersize; i++)
+			{
+				uint8_t r = imagedata[i * 4 + 0];
+				uint8_t g = imagedata[i * 4 + 1];
+				uint8_t b = imagedata[i * 4 + 2];
+				uint8_t a = imagedata[i * 4 + 3];
+				if (r == 255 && g == 0 && b == 255)
+				{
+					a = 0;
+				}
+				imagebuffer[i] = a << 24 | b << 16 | g << 8 | r;
+			}
+		}
+		else if (image.format == PIXELFORMAT_UNCOMPRESSED_R8G8B8)
+		{
+			//RGB
+			for (size_t i = 0; i < buffersize; i++)
+			{
+				uint8_t r = imagedata[i * 3 + 0];
+				uint8_t g = imagedata[i * 3 + 1];
+				uint8_t b = imagedata[i * 3 + 2];
+				uint8_t a = 255;
+				if (r == 255 && g == 0 && b == 255)
+				{
+					a = 0;
+				}
+				imagebuffer[i] = a << 24 | b << 16 | g << 8 | r;
+			}
+		}
+		else
+		{
+			// unsupported format
+			std::cerr << "Unsupported image format" << std::endl;
+			UnloadImage(image);
+			delete[] imagebuffer;
+			return nullptr;
+		}
+		Sprite* sprite = new Sprite;
+		//need to initialise the texture in sprite list before we update the texture to have sprite in it
+		m_Sprites->InitialiseSprite(image.width, image.height, m_SpriteCount);
+		UpdateTexture(m_Sprites->Sprites[m_SpriteCount], imagebuffer);
+		sprite->SpriteID = m_SpriteCount;
+		sprite->Type = type;
+		sprite->Width = image.width;
+		sprite->Height = image.height;
+		m_SpriteCount++;
+		//clean up
+		UnloadImage(image);
+		delete[]imagebuffer;
+		return sprite;
+	}
+	void Renderer::RenderGridLines(uint32_t tilesize)
+	{
+		uint32_t width = m_Width / tilesize;
+		uint32_t height = m_Height / tilesize;
+		for (uint32_t y = 0; y < height; y++)
+		{
+			for (uint32_t x = 0; x < width; x++)
+			{
+				Rectangle rec{ x,y,tilesize,tilesize };
+				DrawRectangleLinesEx(rec, 1.0f, WHITE);
+			}
+		}
+	}
+}
