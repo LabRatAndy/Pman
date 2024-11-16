@@ -63,8 +63,8 @@ namespace Pman
 
 		m_Tiles.clear();
 		//workout size of level
-		uint32_t rows = leveldata.size();
-		uint32_t columns = leveldata[0].length(); //all rows must be this length or we will assert
+		uint32_t rows = (uint32_t)leveldata.size();
+		uint32_t columns = (uint32_t)leveldata[0].length(); //all rows must be this length or we will assert
 		m_LevelHeight = rows;
 		m_LevelWidth = columns;
 		m_Tiles.reserve(m_LevelWidth * m_LevelHeight);
@@ -72,10 +72,10 @@ namespace Pman
 		
 		for (size_t row = 0; row < rows; row++)
 		{
-			ASSERT(leveldata[row].length() == columns, "All rows must be the same length as the first");
+			ASSERT((leveldata[row].length() == columns), "All rows must be the same length as the first");
 			for (size_t column = 0; column < columns; column++)
 			{
-				ASSERT(tilecount > rows * columns, "Error !!!! Too many tiles have been processed!");
+				ASSERT((tilecount < rows * columns), "Error !!!! Too many tiles have been processed!");
 				auto it = m_Tiles.begin() + tilecount;
 				size_t doorx = 0;
 				size_t doory = 0;
@@ -86,8 +86,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Wall;
-					spec.XPosition = column * m_TileSize;
-					spec.YPosition = row * m_TileSize;
+					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
+					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
 					m_Tiles.emplace(it, spec);
 					break;
 				}
@@ -96,8 +96,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Door;
-					spec.XPosition = column * m_TileSize;
-					spec.YPosition = row * m_TileSize;
+					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
+					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
 					m_Tiles.emplace(it, spec);
 					doorx = column;
 					doory = row;
@@ -108,8 +108,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Gem;
-					spec.XPosition = column * m_TileSize;
-					spec.YPosition = row * m_TileSize;
+					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
+					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
 					spec.Texture = m_GemSprite;
 					m_Tiles.emplace(it, spec);
 					break;
@@ -119,8 +119,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::PowerPellet;
-					spec.XPosition = column * m_TileSize;
-					spec.YPosition = row * m_TileSize;
+					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
+					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
 					spec.Texture = m_PowerPelletSprite;
 					m_Tiles.emplace(it, spec);
 					break;
@@ -133,7 +133,7 @@ namespace Pman
 					gspec.EyesSprite = m_GhostEyesSprite;
 					gspec.InitialPosition = { (float)(column * m_TileSize),(float)(row * m_TileSize) };
 					gspec.LevelCallback = this;
-					gspec.MoveSpeed = 10.0f;
+					gspec.MoveSpeed = 20.0f;
 					gspec.ScatterPosition = { (float)(18 * m_TileSize),(float)(1 * m_TileSize) };
 					gspec.TileSize = m_TileSize;
 					gspec.DoorPosition = { (float)doorx * m_TileSize, (float)doory * m_TileSize };
@@ -142,8 +142,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = column * m_TileSize;
-					spec.YPosition = row * m_TileSize;
+					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
+					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -164,8 +164,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = column * m_TileSize;
-					spec.YPosition = row * m_TileSize;
+					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
+					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -186,8 +186,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = column * m_TileSize;
-					spec.YPosition = row * m_TileSize;
+					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
+					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -208,8 +208,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = column * m_TileSize;
-					spec.YPosition = row * m_TileSize;
+					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
+					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -227,8 +227,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = column * m_TileSize;
-					spec.YPosition = row * m_TileSize;
+					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
+					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -237,8 +237,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = column * m_TileSize;
-					spec.YPosition = row * m_TileSize;
+					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
+					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
 					m_Tiles.emplace(it, spec);
 					break;
 				}
@@ -256,10 +256,10 @@ namespace Pman
 	void Level::OnUpdate(float ts)
 	{
 		m_Player->OnUpdate(ts);
-		m_CyanGhost->OnUpdate(ts);
+		//m_CyanGhost->OnUpdate(ts);
 		m_RedGhost->OnUpdate(ts);
-		m_PinkGhost->OnUpdate(ts);
-		m_OrangeGhost->OnUpdate(ts);
+		//m_PinkGhost->OnUpdate(ts);
+		//m_OrangeGhost->OnUpdate(ts);
 	}
 	void Level::OnRender()
 	{
@@ -287,10 +287,10 @@ namespace Pman
 		ASSERT((position.Y >= 0), "next tile is less than 0");
 		ASSERT((position.Y <= m_LevelHeight * m_TileSize), "next tile is more than height of level");
 		Rectangle testrect;
-		testrect.x = position.X;
-		testrect.y = position.Y;
-		testrect.width = m_TileSize - 4;
-		testrect.height = m_TileSize - 4;
+		testrect.x = (float)position.X;
+		testrect.y = (float)position.Y;
+		testrect.width = (float)(m_TileSize - 4);
+		testrect.height = static_cast<float>(m_TileSize - 4);
 		for (const Rectangle& wallrect : m_WallsRectangles)
 		{
 			if (CheckCollisionRecs(testrect, wallrect))
@@ -415,40 +415,40 @@ namespace Pman
 			case TileType::Wall:
 			{
 				Rectangle rect;
-				rect.x = tile.GetAbsoluteXPosition();
-				rect.y = tile.GetAbsoluteYPosition();
-				rect.width = m_TileSize - 4;
-				rect.height = m_TileSize - 4;
+				rect.x = (float)tile.GetAbsoluteXPosition();
+				rect.y = (float)tile.GetAbsoluteYPosition();
+				rect.width = (float)m_TileSize - 4.0f;
+				rect.height = (float)m_TileSize - 4.0f;
 				m_WallsRectangles.emplace_back(rect);
 				break;
 			}
 			case TileType::Door:
 			{
 				Rectangle rect;
-				rect.x = tile.GetAbsoluteXPosition();
-				rect.y = tile.GetAbsoluteYPosition();
-				rect.width = m_TileSize - 4;
-				rect.height = m_TileSize - 4;
+				rect.x = (float)tile.GetAbsoluteXPosition();
+				rect.y = (float)tile.GetAbsoluteYPosition();
+				rect.width = (float)m_TileSize - 4.0f;
+				rect.height = (float)m_TileSize - 4.0f;
 				m_DoorRectangles.emplace_back(rect);
 				break;
 			}
 			case TileType::Gem:
 			{
 				Rectangle rect;
-				rect.x = tile.GetAbsoluteXPosition();
-				rect.y = tile.GetAbsoluteYPosition();
-				rect.width = m_TileSize;
-				rect.height = m_TileSize;
+				rect.x = (float)tile.GetAbsoluteXPosition();
+				rect.y = (float)tile.GetAbsoluteYPosition();
+				rect.width = (float)m_TileSize;
+				rect.height = (float)m_TileSize;
 				m_GemsRectangles.emplace_back(rect);
 				break;
 			}
 			case TileType::PowerPellet:
 			{
 				Rectangle rect;
-				rect.x = tile.GetAbsoluteXPosition();
-				rect.y = tile.GetAbsoluteYPosition();
-				rect.width = m_TileSize;
-				rect.height = m_TileSize;
+				rect.x = (float)tile.GetAbsoluteXPosition();
+				rect.y = (float)tile.GetAbsoluteYPosition();
+				rect.width = (float)m_TileSize;
+				rect.height = (float)m_TileSize;
 				m_PowerPelletRectangles.emplace_back(rect);
 				break;
 			}
@@ -461,7 +461,7 @@ namespace Pman
 		{
 			if (direction.X == -1)
 			{
-				Rectangle rect{ (x - m_TileSize),y,m_TileSize + 1, 5 };
+				Rectangle rect{ static_cast<float>(x - m_TileSize),y,static_cast<float>(m_TileSize + 1), 5.0f };
 				if (CheckCollisionRecs(rect, wall))
 				{
 					return true;
@@ -469,7 +469,7 @@ namespace Pman
 			}
 			else if (direction.X == 1)
 			{
-				Rectangle rect{ x,y,m_TileSize + 1, 5 };
+				Rectangle rect{ x,y,static_cast<float>(m_TileSize + 1), 5.0f };
 				if (CheckCollisionRecs(rect, wall))
 				{
 					return true;
@@ -477,7 +477,7 @@ namespace Pman
 			}
 			else if (direction.Y == -1)
 			{
-				Rectangle rect{ x,(y - m_TileSize),5,m_TileSize + 1 };
+				Rectangle rect{ x,static_cast<float>(y - m_TileSize),5.0f,static_cast<float>(m_TileSize + 1) };
 				if (CheckCollisionRecs(rect, wall))
 				{
 					return true;
@@ -485,7 +485,7 @@ namespace Pman
 			}
 			else if (direction.Y == 1)
 			{
-				Rectangle rect{ x, y,5,m_TileSize + 1 };
+				Rectangle rect{ x, y,5.0f,static_cast<float>(m_TileSize + 1) };
 				if (CheckCollisionRecs(rect, wall))
 				{
 					return true;
@@ -497,7 +497,7 @@ namespace Pman
 		{
 			if (direction.Y == -1)
 			{
-				Rectangle rect{ x,(y - m_TileSize),5,m_TileSize + 1 };
+				Rectangle rect{ x,static_cast<float>(y - m_TileSize),5.0f,static_cast<float>(m_TileSize + 1) };
 				if (CheckCollisionRecs(rect, door))
 				{
 					if (canusedoor)
@@ -509,7 +509,7 @@ namespace Pman
 			}
 			else if (direction.Y == 1)
 			{
-				Rectangle rect{ x,y,5,m_TileSize + 1 };
+				Rectangle rect{ x,y,5.0f,static_cast<float>(m_TileSize + 1) };
 				if (CheckCollisionRecs(rect, door))
 				{
 					if (canusedoor)
@@ -522,31 +522,6 @@ namespace Pman
 		}
 		
 		return false;
-#if 0
-		size_t tileindex = GetTileArrayIndexofTile(x, y, m_LevelWidth);
-		switch (m_Tiles[tileindex].GetTileType())
-		{
-		case TileType::Empty:
-		case TileType::Gem:
-		case TileType::PowerPellet:
-			return false;
-			break;
-		case TileType::Wall:
-			return true;
-			break;
-		case TileType::Door:
-			if (canusedoor)
-			{
-				return false;
-			}
-			else
-			{
-				return true;
-			}
-			break;
-		}
-		return false;
-#endif
 	}
 	void Level::StartGame()
 	{
@@ -575,14 +550,14 @@ namespace Pman
 			{
 				if (m_Tiles[tileindex - 1].GetTileType() != TileType::Wall)
 				{
-					left = tileindex - 1;
+					left = static_cast<int32_t>(tileindex - 1);
 				}
 			}
 			if (column >= 0 && column < m_LevelWidth - 1)
 			{
 				if (m_Tiles[tileindex + 1].GetTileType() != TileType::Wall)
 				{
-					right = tileindex + 1;
+					right = static_cast<int32_t>(tileindex + 1);
 				}
 			}
 
@@ -590,14 +565,14 @@ namespace Pman
 			{
 				if (m_Tiles[tileindex - m_LevelWidth].GetTileType() != TileType::Wall)
 				{
-					top = tileindex - m_LevelWidth;
+					top = static_cast<int32_t>(tileindex - m_LevelWidth);
 				}
 			}
 			if (line < m_LevelHeight - 1)
 			{
 				if (m_Tiles[tileindex + m_LevelWidth].GetTileType() != TileType::Wall)
 				{
-					bottom = tileindex + m_LevelWidth;
+					bottom = static_cast<int32_t>(tileindex + m_LevelWidth);
 				}
 			}
 			m_Tiles[tileindex].SetAdjacentTile(left, right, top, bottom);

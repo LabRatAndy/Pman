@@ -147,7 +147,7 @@ namespace Pman
 		{
 			for (uint32_t x = 0; x < width; x++)
 			{
-				Rectangle rec{ x,y,tilesize,tilesize };
+				Rectangle rec{ static_cast<float>(x),static_cast<float>(y),static_cast<float>(tilesize),static_cast<float>(tilesize) };
 				DrawRectangleLinesEx(rec, 1.0f, WHITE);
 			}
 		}

@@ -16,7 +16,7 @@ namespace Pman
 	{
 		leftover = std::fmod(position, (float)tilesize);
 		position = position - leftover;
-		return (position / tilesize);
+		return (uint32_t)(position / tilesize);
 	}
 	static float PortionInTile(float position, uint32_t tilesize)
 	{
@@ -54,6 +54,8 @@ namespace Pman
 			m_FrightenedTimer -= ts;
 		}
 		UpdateTarget();
+		ASSERT((m_Target.X <= m_Specification.LevelCallback->GetAbsoluteWidth()), "Error invalid target width");
+		ASSERT((m_Target.Y <= m_Specification.LevelCallback->GetAbsoluteHeight()), "Error invalid target height");
 		//work out direction to take
 		{
 			if (ts < 0.001)
@@ -118,11 +120,13 @@ namespace Pman
 				{
 					m_Mode = GhostMode::Scatter;
 					m_ModeTimer = 0.0f;
+					m_Direction.ReverseDirection();
 				}
 				else if (m_Mode == GhostMode::Scatter)
 				{
 					m_Mode = GhostMode::Chase;
 					m_ModeTimer = 0.0f;
+					m_Direction.ReverseDirection();
 				}
 			}
 			m_ModeTimer += ts;
@@ -136,13 +140,13 @@ namespace Pman
 		{
 		case GhostStatus::NotStarted:
 		case GhostStatus::Running:
-			Application::Get().GetRenderer().RenderSprite(m_Specification.MainSprite, m_Position.X, m_Position.Y, m_Specification.TileSize);
+			Application::Get().GetRenderer().RenderSprite(m_Specification.MainSprite, (uint32_t)m_Position.X, (uint32_t)m_Position.Y, m_Specification.TileSize);
 			break;
 		case GhostStatus::IsBlue:
-			Application::Get().GetRenderer().RenderSprite(m_Specification.BlueSprite, m_Position.X, m_Position.Y, m_Specification.TileSize);
+			Application::Get().GetRenderer().RenderSprite(m_Specification.BlueSprite, (uint32_t)m_Position.X, (uint32_t)m_Position.Y, m_Specification.TileSize);
 			break;
 		case GhostStatus::EyesOnly:
-			Application::Get().GetRenderer().RenderSprite(m_Specification.EyesSprite, m_Position.X, m_Position.Y, m_Specification.TileSize);
+			Application::Get().GetRenderer().RenderSprite(m_Specification.EyesSprite, (uint32_t)m_Position.X, (uint32_t)m_Position.Y, m_Specification.TileSize);
 			break;
 		}
 	}
@@ -217,21 +221,25 @@ namespace Pman
 					break;
 				case GhostType::Cyan: // 2nd cell in fromt of the pacman then double the vector from red ghost
 				{
-					m_Target = m_Specification.LevelCallback->GetPacmanPosition();
+					auto pmanpos = m_Specification.LevelCallback->GetPacmanPosition();
 					auto direction = m_Specification.LevelCallback->GetPacmanDirection();
-					m_Target.X += direction.X * (m_Specification.TileSize * 2);
-					m_Target.Y += direction.Y * (m_Specification.TileSize * 2);
+					pmanpos.X += direction.X * (m_Specification.TileSize * 2);
+					pmanpos.Y += direction.Y * (m_Specification.TileSize * 2);
 					auto redghostpos = m_Specification.LevelCallback->GetRedGhostPosition();
-					m_Target.X += m_Target.X - redghostpos.X;
-					m_Target.Y += m_Target.Y - redghostpos.Y;
+					float answerX = redghostpos.X - pmanpos.X;
+					float answerY = redghostpos.Y - pmanpos.Y;
+					m_Target.X = pmanpos.X + (2 * answerX);
+					m_Target.Y = pmanpos.Y + (2 * answerY);
+					m_Target.X = std::clamp(m_Target.X, 1.0f * m_Specification.TileSize, 18.0f * m_Specification.TileSize);
+					m_Target.Y = std::clamp(m_Target.Y, 1.0f * m_Specification.TileSize, 18.0f * m_Specification.TileSize);
 					return;
 					break;
 				}
 				case GhostType::Orange: // chase pacman until it gets close(3 tiles) then goes to scatter mode
 				{
-					float mindistance = 3 * m_Specification.TileSize;
+					float mindistance = 3.0f * m_Specification.TileSize;
 					auto pacmanposition = m_Specification.LevelCallback->GetPacmanPosition();
-					float distancetopacman = std::sqrt(std::pow(m_Position.X - pacmanposition.X, 2) + std::pow(m_Position.Y - pacmanposition.Y, 2));
+					float distancetopacman = (float)std::sqrt((float)std::pow(m_Position.X - pacmanposition.X, 2) + (float)std::pow(m_Position.Y - pacmanposition.Y, 2));
 					if (mindistance <= distancetopacman)
 					{
 						m_Target = pacmanposition;
@@ -318,6 +326,7 @@ namespace Pman
 		}
 		//construct the path
 		std::stack<uint32_t> pathtotarget;
+		ASSERT((GetTileIndexFromPosition(m_Target, m_Specification.TileSize, m_Specification.LevelCallback->GetLevelWidthInTiles()) <= 441), "Index is invalid");
 		for (int32_t at = GetTileIndexFromPosition(m_Target, m_Specification.TileSize, m_Specification.LevelCallback->GetLevelWidthInTiles()); at != -1; at = prev[at])
 		{
 			pathtotarget.push(at);

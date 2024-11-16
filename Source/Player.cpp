@@ -11,8 +11,8 @@ namespace Pman
 {
 	static Vec2<uint32_t> RoundFloatPostionToUint32(const Vec2<float>& position)
 	{
-		uint32_t x = std::round(position.X);
-		uint32_t y = std::round(position.Y);
+		uint32_t x = static_cast<uint32_t>(std::round(position.X));
+		uint32_t y = static_cast<uint32_t>(std::round(position.Y));
 		return { x,y };
 	}
 	Player::Player(const PlayerSpecification& spec) : m_Specification(spec), m_Lives(spec.PlayerLives), m_Position(spec.InitialPosition), m_Status(PlayerStatus::NotStarted)
@@ -25,7 +25,7 @@ namespace Pman
 	}
 	void Player::OnRender()
 	{
-		Application::Get().GetRenderer().RenderSprite(m_Specification.PlayerSprite, m_Position.X, m_Position.Y, m_Specification.TileSize);
+		Application::Get().GetRenderer().RenderSprite(m_Specification.PlayerSprite, static_cast<uint32_t>(m_Position.X), static_cast<uint32_t>(m_Position.Y), m_Specification.TileSize);
 	}
 	void Player::OnUpdate(float ts)
 	{
