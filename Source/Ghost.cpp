@@ -66,7 +66,7 @@ namespace Pman
 				m_Direction.X = 0;
 				m_Direction.Y = 1;
 			}
-			if (GetTileIndex(m_Target,m_Specification.LevelCallback->GetLevelWidthInTiles()) == m_TileToMoveToIndex)
+			if (m_Position == m_Target)
 			{
 				//stop moveing as we are all ready at target
 				m_Direction.X = 0;
@@ -87,29 +87,35 @@ namespace Pman
 				m_PixelPosition.X = 0 + (m_Specification.MoveSpeed * ts);
 			}
 			//update position in tiles
-			m_Position.X = std::floor(m_PixelPosition.X / m_Specification.TileSize);
-			m_Position.Y = std::floor(m_PixelPosition.Y / m_Specification.TileSize);
+			if (m_PixelPosition.X % m_Specification.TileSize == 0)
+			{
+				m_Position.X = std::floor(m_PixelPosition.X / m_Specification.TileSize);
+			}
+			if (m_PixelPosition.Y % m_Specification.TileSize == 0)
+			{
+				m_Position.Y = std::floor(m_PixelPosition.Y / m_Specification.TileSize);
+			}
 
 		}
 		{
 			//update timers and modes ready for next frame only scatter and chase here not frightned(isblue status) or eaten (Eyesonly status this is handled at the top of function currently 
-			if (m_ModeTimer > 5.0f) //not mode switching after 30 seconds not prototypical, for testing 
-			{
-				std::cout << "Mode switch!" << std::endl;
-				if (m_Mode == GhostMode::Chase)
-				{
-					m_Mode = GhostMode::Scatter;
-					m_ModeTimer = 0.0f;
-					m_Direction.ReverseDirection();
-				}
-				else if (m_Mode == GhostMode::Scatter)
-				{
-					m_Mode = GhostMode::Chase;
-					m_ModeTimer = 0.0f;
-					m_Direction.ReverseDirection();
-				}
-			}
-			m_ModeTimer += ts;
+			//if (m_ModeTimer > 5.0f) //not mode switching after 30 seconds not prototypical, for testing 
+			//{
+			//	std::cout << "Mode switch!" << std::endl;
+			//	if (m_Mode == GhostMode::Chase)
+			//	{
+			//		m_Mode = GhostMode::Scatter;
+			//		m_ModeTimer = 0.0f;
+			//		m_Direction.ReverseDirection();
+			//	}
+			//	else if (m_Mode == GhostMode::Scatter)
+			//	{
+			//		m_Mode = GhostMode::Chase;
+			//		m_ModeTimer = 0.0f;
+			//		m_Direction.ReverseDirection();
+			//	}
+			//}
+			//m_ModeTimer += ts;
 		}
 
 	}
@@ -238,7 +244,7 @@ namespace Pman
 	void Ghost::FindPath(const Vec2<int32_t>& starttile)
 	{
 		//check we are not already at the target
-		if (GetTileIndex(starttile, m_Specification.LevelCallback->GetLevelWidthInTiles()) == GetTileIndexFromPosition(m_Target, m_Specification.TileSize, m_Specification.LevelCallback->GetLevelWidthInTiles()))
+		if (GetTileIndex(starttile, m_Specification.LevelCallback->GetLevelWidthInTiles()) == GetTileIndex(m_Target, m_Specification.LevelCallback->GetLevelWidthInTiles()))
 		{
 			//we are on the target tile so do nothing
 			m_TileToMoveToIndex = GetTileIndex(starttile, m_Specification.LevelCallback->GetLevelWidthInTiles());
@@ -272,8 +278,8 @@ namespace Pman
 		}
 		//construct the path
 		std::vector<uint32_t> pathtotarget;
-		ASSERT((GetTileIndexFromPosition(m_Target, m_Specification.TileSize, m_Specification.LevelCallback->GetLevelWidthInTiles()) <= 441), "Index is invalid");
-		for (int32_t at = GetTileIndexFromPosition(m_Target, m_Specification.TileSize, m_Specification.LevelCallback->GetLevelWidthInTiles()); at != -1; at = prev[at])
+		ASSERT((GetTileIndex(m_Target, m_Specification.LevelCallback->GetLevelWidthInTiles()) <= 441), "Index is invalid");
+		for (int32_t at = GetTileIndex(m_Target, m_Specification.LevelCallback->GetLevelWidthInTiles()); at != -1; at = prev[at])
 		{
 			pathtotarget.emplace_back(at);
 		}

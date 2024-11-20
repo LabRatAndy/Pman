@@ -131,8 +131,8 @@ namespace Pman
 					gspec.EyesSprite = m_GhostEyesSprite;
 					gspec.InitialPosition = { static_cast<int32_t>(column),static_cast<int32_t>(row) };
 					gspec.LevelCallback = this;
-					gspec.MoveSpeed = 20.0f;
-					gspec.ScatterPosition = { 18,1 };
+					gspec.MoveSpeed = 61.0f;
+					gspec.ScatterPosition = { 18,1 }; 
 					gspec.TileSize = m_TileSize;
 					gspec.DoorPosition = { static_cast<int32_t>(doorx),static_cast<int32_t>(doory) };
 					gspec.Type = GhostType::Red;
@@ -216,7 +216,7 @@ namespace Pman
 					ASSERT(!m_Player, "Already have a player!");
 					PlayerSpecification pspec{};
 					pspec.InitialPosition = { static_cast<int32_t>(column),static_cast<int32_t>(row) };
-					pspec.MoveSpeed = 100.0f;
+					pspec.MoveSpeed = 10.0f;
 					pspec.PlayerLives = 3;
 					pspec.PlayerSprite = m_PlayerSprite;
 					pspec.TileSize = m_TileSize;
@@ -257,7 +257,7 @@ namespace Pman
 	{
 		m_Player->OnUpdate(ts);
 		//m_CyanGhost->OnUpdate(ts);
-		//m_RedGhost->OnUpdate(ts);
+		m_RedGhost->OnUpdate(ts);
 		//m_PinkGhost->OnUpdate(ts);
 		//m_OrangeGhost->OnUpdate(ts);
 	}
@@ -517,7 +517,7 @@ namespace Pman
 	void Level::StartGame()
 	{
 		m_Player->StartGame();
-		//m_RedGhost->StartGame();
+		m_RedGhost->StartGame();
 		//m_PinkGhost->StartGame();
 		//m_CyanGhost->StartGame();
 		//m_OrangeGhost->StartGame();
@@ -538,6 +538,7 @@ namespace Pman
 				line++;
 				column = 0;
 			}
+			//ASSERT((line != 5), "test");
 			if (column >= 1 && column < m_LevelWidth)
 			{
 				if (m_Tiles[tileindex - 1].GetTileType() != TileType::Wall)
@@ -555,14 +556,14 @@ namespace Pman
 
 			if (line>=1)
 			{
-				if (m_Tiles[tileindex - m_LevelWidth].GetTileType() != TileType::Wall)
+				if (m_Tiles[(tileindex - m_LevelWidth)].GetTileType() != TileType::Wall)
 				{
 					top = static_cast<int32_t>(tileindex - m_LevelWidth);
 				}
 			}
 			if (line < m_LevelHeight - 1)
 			{
-				if (m_Tiles[tileindex + m_LevelWidth].GetTileType() != TileType::Wall)
+				if (m_Tiles[(tileindex + m_LevelWidth)].GetTileType() != TileType::Wall)
 				{
 					bottom = static_cast<int32_t>(tileindex + m_LevelWidth);
 				}
