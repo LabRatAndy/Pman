@@ -6,15 +6,7 @@ namespace Pman
 	{
 
 	}
-	Tile::~Tile()
-	{
-		//spites are cleaned up by the renderer!
-	}
 
-	void Tile::OnRender()
-	{
-		//TODO
-	}
 	void Tile::CollectGem()
 	{
 		if (m_Type != TileType::Gem)

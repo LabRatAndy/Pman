@@ -17,8 +17,8 @@ namespace Pman
 	struct TileSpecification
 	{
 		TileType Type = TileType::Invaild;
-		uint32_t XPosition = 0; // in pixels
-		uint32_t YPosition = 0;	//in pixels
+		uint32_t XPosition = 0; // Grid position where 0,0 is top left corner tile
+		uint32_t YPosition = 0;	// Grid position where 0,0 is top left corner tile
 		uint32_t TileSize = 0;
 		Sprite* Texture = nullptr;
 	};
@@ -27,18 +27,16 @@ namespace Pman
 	{
 	public:
 		Tile(const TileSpecification& spec);
-		~Tile();
-
-		void OnRender();
+		~Tile() = default; //spites are cleaned up by the renderer!
 
 		void CollectGem();
 		void CollectPowerPellet();
 
-		uint32_t GetTileXPosition() const { return m_XPosition / m_TileSize; }
-		uint32_t GetTileYPosition() const { return m_YPosition / m_TileSize; }
+		uint32_t GetTileXPosition() const { return m_XPosition; }
+		uint32_t GetTileYPosition() const { return m_YPosition; }
 
-		uint32_t GetAbsoluteXPosition() const { return m_XPosition; }
-		uint32_t GetAbsoluteYPosition() const { return m_YPosition; }
+		uint32_t GetAbsoluteXPosition() const { return m_XPosition * m_TileSize; }
+		uint32_t GetAbsoluteYPosition() const { return m_YPosition * m_TileSize; }
 
 		uint32_t GetTileSize() const { return m_TileSize; }
 

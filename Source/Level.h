@@ -56,20 +56,21 @@ namespace Pman
 		uint32_t GetAbsoluteWidth() const { return m_LevelWidth * m_TileSize; }
 		uint32_t GetAbsoluteHeight() const { return m_LevelHeight * m_TileSize; }
 
-		bool CollideWithWall(const Vec2<uint32_t>& position, const Vec2<int32_t>& direction, bool canusedoor);
-		bool CollectGem(const Vec2<float>& position);
-		bool CollectPowerPellet(const Vec2<float>& position);
+		// these will likely need to be reviewed
+		bool CollideWithWall(const Vec2<int32_t>& position, const Vec2<int32_t>& direction, bool canusedoor);
+		bool CollectGem(const Vec2<int32_t>& position);
+		bool CollectPowerPellet(const Vec2<int32_t>& position);
 		bool CollideWithWall(const uint32_t& tilex, const uint32_t& tiley, const Vec2<int32_t>& direction, const bool& canusedoor);
 		bool IsTileAWall(const float& x, const float& y,const Vec2<int32_t>& direction, const bool canusedoor) const;
 
 		const std::array<int32_t, 4>& GetAdjacentTileList(size_t tile) const { return m_Tiles[tile].GetAdjacentTile(); }
 		const Tile& GetTile(const size_t index) const { return m_Tiles[index]; }
 
-		Vec2<float> GetPacmanPosition() const
+		Vec2<int32_t> GetPacmanPosition() const
 		{
 			if (m_Player == nullptr)
 			{
-				return { 0.0f,0.0f };
+				return { -1,-1 };
 			}
 			else
 				return m_Player->GetPosition();
@@ -83,11 +84,11 @@ namespace Pman
 			else
 				return m_Player->GetDirection();
 		}
-		Vec2<float> GetRedGhostPosition() const
+		Vec2<int32_t> GetRedGhostPosition() const
 		{
 			if (m_RedGhost == nullptr)
 			{
-				return { 0.0f,0.0f };
+				return { -1,-1 };
 			}
 			else
 				return m_RedGhost->GetPosition();

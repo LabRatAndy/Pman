@@ -3,19 +3,15 @@
 #include "Renderer.h"
 #include "Level.h"
 #include "Assert.h"
+#include "utills.h"
 
 #include <raylib.h>
 
 #include <iostream>
 namespace Pman
 {
-	static Vec2<uint32_t> RoundFloatPostionToUint32(const Vec2<float>& position)
-	{
-		uint32_t x = static_cast<uint32_t>(std::round(position.X));
-		uint32_t y = static_cast<uint32_t>(std::round(position.Y));
-		return { x,y };
-	}
-	Player::Player(const PlayerSpecification& spec) : m_Specification(spec), m_Lives(spec.PlayerLives), m_Position(spec.InitialPosition), m_Status(PlayerStatus::NotStarted)
+	
+	Player::Player(const PlayerSpecification& spec) : m_Specification(spec), m_Lives(spec.PlayerLives), m_Position(spec.InitialPosition), m_Status(PlayerStatus::NotStarted), m_PixelPosition({ static_cast<int32_t>(spec.InitialPosition.X * spec.TileSize),static_cast<int32_t>(spec.InitialPosition.Y * spec.TileSize) })
 	{
 
 	}
@@ -25,7 +21,7 @@ namespace Pman
 	}
 	void Player::OnRender()
 	{
-		Application::Get().GetRenderer().RenderSprite(m_Specification.PlayerSprite, static_cast<uint32_t>(m_Position.X), static_cast<uint32_t>(m_Position.Y), m_Specification.TileSize);
+		Application::Get().GetRenderer().RenderSprite(m_Specification.PlayerSprite, m_PixelPosition.X, m_PixelPosition.Y, m_Specification.TileSize);
 	}
 	void Player::OnUpdate(float ts)
 	{
@@ -61,15 +57,18 @@ namespace Pman
 		}
 		if (m_Direction.X != 0 || m_Direction.Y != 0)
 		{
-			float newXposition = m_Position.X + (m_Direction.X * (m_Specification.MoveSpeed * ts));
-			float newYposition = m_Position.Y + (m_Direction.Y * (m_Specification.MoveSpeed * ts));
+			float newXposition = m_PixelPosition.X + (m_Direction.X * (m_Specification.MoveSpeed * ts));
+			float newYposition = m_PixelPosition.Y + (m_Direction.Y * (m_Specification.MoveSpeed * ts));
 			//check if colliding with a wall, gem, etc. Before applying the movement also add check to see if has been caught by a ghost and then loose a life. Pacman cannot use the door so last parameter has to be false 
-			if (!m_Specification.LevelCallback->CollideWithWall(RoundFloatPostionToUint32({ newXposition,newYposition }), m_Direction, false))
+			if (!m_Specification.LevelCallback->CollideWithWall({ static_cast<int32_t>(newXposition),static_cast<int32_t>(newYposition) }, m_Direction, false))
 			{
-				m_Position.X = newXposition;
-				m_Position.Y = newYposition;
+				m_PixelPosition.X = newXposition;
+				m_PixelPosition.Y = newYposition;
 			}
 		}
+		//update m_Position
+		m_Position.X = std::floor(m_PixelPosition.X / m_Specification.TileSize);
+		m_Position.Y = std::floor(m_PixelPosition.Y / m_Specification.TileSize);
 	}
 	void Player::Reset()
 	{

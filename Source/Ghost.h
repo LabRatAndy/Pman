@@ -38,9 +38,9 @@ namespace Pman
 		Sprite* BlueSprite = nullptr;
 		Sprite* EyesSprite = nullptr;
 		GhostType Type = GhostType::Invalid;
-		Vec2<float> InitialPosition = { 0.0f,0.0f };
-		Vec2<float> ScatterPosition = { 0.0f,0.0f };
-		Vec2<float> DoorPosition = { 0.0f,0.0f };
+		Vec2<int32_t> InitialPosition = { -1,-1 };
+		Vec2<int32_t> ScatterPosition = { -1,-1 };
+		Vec2<int32_t> DoorPosition = { -1,-1 };
 		uint32_t TileSize = 32;
 		float MoveSpeed = 1.0f;
 		Level* LevelCallback = nullptr;
@@ -60,7 +60,7 @@ namespace Pman
 
 		GhostStatus GetStatus() const { return m_Status; }
 		GhostMode GetMode() const { return m_Mode; }
-		Vec2<float> GetPosition() const { return m_Position; }
+		Vec2<int32_t> GetPosition() const { return m_Position; }
 		float GetMoveSpeed() const { return m_Specification.MoveSpeed; }
 
 		void SetPowerPelletActivated();
@@ -70,9 +70,10 @@ namespace Pman
 		GhostStatus m_Status = GhostStatus::Invalid;
 		GhostMode m_Mode = GhostMode::Invalid;
 		GhostSpecification m_Specification = GhostSpecification();
-		Vec2<float> m_Position = { 0.0f,0.0f };
+		Vec2<int32_t> m_Position = { -1,-1 };
+		Vec2<int32_t>m_PixelPosition = { -1,-1 };
 		Vec2<int32_t> m_Direction = { 0,0 };
-		Vec2<float> m_Target = { 0.0f,0.0f };
+		Vec2<int32_t> m_Target = { -1,-1 };
 		float m_FrightenedTimer = 0.0f;
 		float m_ModeTimer = 0.0f;
 		uint32_t m_AttackWave = 0;
@@ -80,10 +81,7 @@ namespace Pman
 		int32_t m_TileToMoveToIndex = -1;
 		
 
-
-		float GetDistanceToTarget(const Vec2<int32_t>& direction, float ts);
 		void UpdateTarget();
-		Vec2<uint32_t> GetTileCoordinate() const;
-		void FindPath(const Vec2<uint32_t>& tile);
+		void FindPath(const Vec2<int32_t>& tile);
 	};
 }

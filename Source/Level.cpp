@@ -2,15 +2,13 @@
 #include "Assert.h"
 #include "Application.h"
 #include "Renderer.h"
+#include "utills.h"
 
 #include <raylib.h>
 
 namespace Pman
 {
-	static size_t GetTileArrayIndexofTile(uint32_t x, uint32_t y, uint32_t levelwidth)
-	{
-		return (y * levelwidth) + x;
-	}
+	
 	Level::Level(const uint32_t tilesize) : m_TileSize(tilesize)
 	{
 
@@ -86,8 +84,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Wall;
-					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
-					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
+					spec.XPosition = column;
+					spec.YPosition = row;
 					m_Tiles.emplace(it, spec);
 					break;
 				}
@@ -96,8 +94,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Door;
-					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
-					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
+					spec.XPosition = column;
+					spec.YPosition = row;
 					m_Tiles.emplace(it, spec);
 					doorx = column;
 					doory = row;
@@ -108,8 +106,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Gem;
-					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
-					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
+					spec.XPosition = column;
+					spec.YPosition = row;
 					spec.Texture = m_GemSprite;
 					m_Tiles.emplace(it, spec);
 					break;
@@ -119,8 +117,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::PowerPellet;
-					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
-					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
+					spec.XPosition = column;
+					spec.YPosition = row;
 					spec.Texture = m_PowerPelletSprite;
 					m_Tiles.emplace(it, spec);
 					break;
@@ -131,19 +129,19 @@ namespace Pman
 					gspec.MainSprite = m_RedGhostSprite;
 					gspec.BlueSprite = m_BlueGhostSprite;
 					gspec.EyesSprite = m_GhostEyesSprite;
-					gspec.InitialPosition = { (float)(column * m_TileSize),(float)(row * m_TileSize) };
+					gspec.InitialPosition = { static_cast<int32_t>(column),static_cast<int32_t>(row) };
 					gspec.LevelCallback = this;
 					gspec.MoveSpeed = 20.0f;
-					gspec.ScatterPosition = { (float)(18 * m_TileSize),(float)(1 * m_TileSize) };
+					gspec.ScatterPosition = { 18,1 };
 					gspec.TileSize = m_TileSize;
-					gspec.DoorPosition = { (float)doorx * m_TileSize, (float)doory * m_TileSize };
+					gspec.DoorPosition = { static_cast<int32_t>(doorx),static_cast<int32_t>(doory) };
 					gspec.Type = GhostType::Red;
 					m_RedGhost = new Ghost(gspec);
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
-					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
+					spec.XPosition = column;
+					spec.YPosition = row;
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -153,19 +151,19 @@ namespace Pman
 					gspec.MainSprite = m_PinkGhostSprite;
 					gspec.BlueSprite = m_BlueGhostSprite;
 					gspec.EyesSprite = m_GhostEyesSprite;
-					gspec.InitialPosition = { (float)(column * m_TileSize),(float)(row * m_TileSize) };
+					gspec.InitialPosition = { static_cast<int32_t>(column),static_cast<int32_t>(row) };
 					gspec.LevelCallback = this;
 					gspec.MoveSpeed = 10.0f;
-					gspec.ScatterPosition = { (float)2 * m_TileSize,(float)1 * m_TileSize };
+					gspec.ScatterPosition = { 2,1 };
 					gspec.TileSize = m_TileSize;
 					gspec.Type = GhostType::Pink;
-					gspec.DoorPosition = { (float)doorx * m_TileSize, (float)doory * m_TileSize };
+					gspec.DoorPosition = { static_cast<int32_t>(doorx),static_cast<int32_t>(doory) };
 					m_PinkGhost = new Ghost(gspec);
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
-					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
+					spec.XPosition = column;
+					spec.YPosition = row;
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -175,19 +173,19 @@ namespace Pman
 					gspec.MainSprite = m_CyanGhostSprite;
 					gspec.BlueSprite = m_BlueGhostSprite;
 					gspec.EyesSprite = m_GhostEyesSprite;
-					gspec.InitialPosition = { (float)(column * m_TileSize),(float)(row * m_TileSize) };
+					gspec.InitialPosition = { static_cast<int32_t>(column),static_cast<int32_t>(row) };
 					gspec.LevelCallback = this;
 					gspec.MoveSpeed = 10.0f;
-					gspec.ScatterPosition = { (float)18 * m_TileSize,(float)19 * m_TileSize };
+					gspec.ScatterPosition = { 18,19 };
 					gspec.TileSize = m_TileSize;
 					gspec.Type = GhostType::Cyan;
-					gspec.DoorPosition = { (float)doorx * m_TileSize, (float)doory * m_TileSize };
+					gspec.DoorPosition = { static_cast<int32_t>(doorx),static_cast<int32_t>(doory) };
 					m_CyanGhost = new Ghost(gspec);
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
-					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
+					spec.XPosition = column;
+					spec.YPosition = row;
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -197,19 +195,19 @@ namespace Pman
 					gspec.MainSprite = m_OrangeGhostSprite;
 					gspec.BlueSprite = m_BlueGhostSprite;
 					gspec.EyesSprite = m_GhostEyesSprite;
-					gspec.InitialPosition = { (float)(column * m_TileSize),(float)(row * m_TileSize) };
+					gspec.InitialPosition = { static_cast<int32_t>(column),static_cast<int32_t>(row) };
 					gspec.LevelCallback = this;
 					gspec.MoveSpeed = 10.0f;
-					gspec.ScatterPosition = { (float)2 * m_TileSize,(float)19 * m_TileSize };
+					gspec.ScatterPosition = { 2,19 };
 					gspec.TileSize = m_TileSize;
 					gspec.Type = GhostType::Orange;
-					gspec.DoorPosition = { (float)doorx * m_TileSize, (float)doory * m_TileSize };
+					gspec.DoorPosition = { static_cast<int32_t>(doorx),static_cast<int32_t>(doory) };
 					m_OrangeGhost = new Ghost(gspec);
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
-					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
+					spec.XPosition = column;
+					spec.YPosition = row;
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -217,18 +215,20 @@ namespace Pman
 				{
 					ASSERT(!m_Player, "Already have a player!");
 					PlayerSpecification pspec{};
-					pspec.InitialPosition = { (float)(column * m_TileSize),(float)(row * m_TileSize) };
-					pspec.MoveSpeed = 50.0f;
+					pspec.InitialPosition = { static_cast<int32_t>(column),static_cast<int32_t>(row) };
+					pspec.MoveSpeed = 100.0f;
 					pspec.PlayerLives = 3;
 					pspec.PlayerSprite = m_PlayerSprite;
 					pspec.TileSize = m_TileSize;
+					pspec.LevelWidth = m_LevelWidth;
+					pspec.LevelHeight = m_LevelHeight;
 					pspec.LevelCallback = this;
 					m_Player = new Player(pspec);
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
-					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
+					spec.XPosition = column;
+					spec.YPosition = row;
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -237,8 +237,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = static_cast<uint32_t>(column * m_TileSize);
-					spec.YPosition = static_cast<uint32_t>(row * m_TileSize);
+					spec.XPosition = column;
+					spec.YPosition = row;
 					m_Tiles.emplace(it, spec);
 					break;
 				}
@@ -257,7 +257,7 @@ namespace Pman
 	{
 		m_Player->OnUpdate(ts);
 		//m_CyanGhost->OnUpdate(ts);
-		m_RedGhost->OnUpdate(ts);
+		//m_RedGhost->OnUpdate(ts);
 		//m_PinkGhost->OnUpdate(ts);
 		//m_OrangeGhost->OnUpdate(ts);
 	}
@@ -279,59 +279,54 @@ namespace Pman
 		m_PinkGhost->OnRender();
 		m_OrangeGhost->OnRender();
 	}
-	bool Level::CollideWithWall(const Vec2<uint32_t>& position, const Vec2<int32_t>& direction, bool canusedoor)
+	/// <summary>
+	/// Checks if you will collide with a wall 
+	/// </summary>
+	/// <param name="position">the pixel position of the player</param>
+	/// <param name="direction">The direction vector -1 is up/ left and 1 is right/down, 0 no movement in that axis</param>
+	/// <param name="canusedoor">is able to use the ghost house door</param>
+	/// <returns>true on collision with wall</returns>
+	bool Level::CollideWithWall(const Vec2<int32_t>& position, const Vec2<int32_t>& direction, bool canusedoor)
 	{
-		//check we are still within bounds
-		ASSERT((position.X >= 0), "next tile is less than 0");
-		ASSERT((position.X <= m_LevelWidth * m_TileSize), "next tile is more than width of level");
-		ASSERT((position.Y >= 0), "next tile is less than 0");
-		ASSERT((position.Y <= m_LevelHeight * m_TileSize), "next tile is more than height of level");
-		Rectangle testrect;
-		testrect.x = (float)position.X;
-		testrect.y = (float)position.Y;
-		testrect.width = (float)(m_TileSize - 4);
-		testrect.height = static_cast<float>(m_TileSize - 4);
-		for (const Rectangle& wallrect : m_WallsRectangles)
+		//convert to tile space 
+		float tilex = static_cast<float>(position.X) / static_cast<float>(m_TileSize);
+		float tiley = static_cast<float>(position.Y) / static_cast<float>(m_TileSize);
+		int32_t lowx = std::floor(tilex);
+		int32_t highx = std::ceil(tilex);
+		int32_t lowy = std::floor(tiley);
+		int32_t highy = std::ceil(tiley);
+		std::array<uint32_t, 4> tileindices;
+		tileindices[0] = GetTileIndex({ lowx,lowy }, m_LevelWidth);			//Top left
+		tileindices[1] = GetTileIndex({ lowx, highy }, m_LevelWidth);		//bottom left
+		tileindices[2] = GetTileIndex({ highx,lowy }, m_LevelWidth);		//top right
+		tileindices[3] = GetTileIndex({ highx,highy }, m_LevelWidth);		//bottom right
+
+		if (m_Tiles[tileindices[0]].GetTileType() == TileType::Wall || m_Tiles[tileindices[0]].GetTileType() == TileType::Door)
 		{
-			if (CheckCollisionRecs(testrect, wallrect))
+			if (direction.X == -1 || direction.Y == -1)
 			{
-				std::cout << "Test rectangle x,y,w,h: " << testrect.x << "," << testrect.y << "," << testrect.width << "," << testrect.height << std::endl;
-				std::cout << "Wall rectangle x,y,w,h: " << wallrect.x << "," << wallrect.y << "," << wallrect.width << "," << wallrect.height << std::endl;
-				if (direction.X == -1 && testrect.x >= wallrect.x)
-				{
-					return true;
-				}
-				else if (direction.X == 1 && testrect.x <= wallrect.x)
-				{
-					return true;
-				}
-				else if (direction.Y == -1 && testrect.y >= wallrect.y)
-				{
-					return true;
-				}
-				else if (direction.Y == 1 && testrect.y <= wallrect.y)
-				{
-					return true;
-				}
+				return true;
 			}
 		}
-		//door check
-		if (!canusedoor)
+		else if (m_Tiles[tileindices[1]].GetTileType() == TileType::Wall || m_Tiles[tileindices[1]].GetTileType() == TileType::Door)
 		{
-			for (const Rectangle& doorrect : m_DoorRectangles)
+			if (direction.X == -1 || direction.Y == 1)
 			{
-				if (CheckCollisionRecs(testrect, doorrect))
-				{
-					//only need up/down check as can't approach the door from the side
-					if (direction.Y == -1 && testrect.y >= doorrect.y)
-					{
-						return true;
-					}
-					else if (direction.Y == 1 && testrect.y <= doorrect.y)
-					{
-						return true;
-					}
-				}
+				return true;
+			}
+		}
+		else if(m_Tiles[tileindices[2]].GetTileType() == TileType::Wall || m_Tiles[tileindices[2]].GetTileType() == TileType::Door)
+		{
+			if (direction.X == 1 || direction.Y == -1)
+			{
+				return true;
+			}
+		}
+		else if(m_Tiles[tileindices[3]].GetTileType() == TileType::Wall || m_Tiles[tileindices[3]].GetTileType() == TileType::Door)
+		{
+			if (direction.X == 1 || direction.Y == 1)
+			{
+				return true;
 			}
 		}
 		return false;
@@ -378,11 +373,9 @@ namespace Pman
 		}
 		return false;
 	}
-	bool Level::CollectGem(const Vec2<float>& position)
+	bool Level::CollectGem(const Vec2<int32_t>& position)
 	{
-		uint32_t x = (uint32_t)std::round((position.X / (float)m_TileSize));
-		uint32_t y = (uint32_t)std::round((position.Y / (float)m_TileSize));
-		size_t tileindex = GetTileArrayIndexofTile(x, y, m_LevelWidth);
+		size_t tileindex = GetTileArrayIndexofTile(position.X, position.Y, m_LevelWidth);
 		if (m_Tiles[tileindex].GetTileType() == TileType::Gem)
 		{
 			m_Tiles[tileindex].CollectGem();
@@ -390,11 +383,9 @@ namespace Pman
 		}
 		return false;
 	}
-	bool Level::CollectPowerPellet(const Vec2<float>& position)
+	bool Level::CollectPowerPellet(const Vec2<int32_t>& position)
 	{
-		uint32_t x = (uint32_t)std::round((position.X / (float)m_TileSize));
-		uint32_t y = (uint32_t)std::round((position.Y / (float)m_TileSize));
-		size_t tileindex = GetTileArrayIndexofTile(x, y, m_LevelWidth);
+		size_t tileindex = GetTileArrayIndexofTile(position.X, position.Y, m_LevelWidth);
 		if (m_Tiles[tileindex].GetTileType() == TileType::PowerPellet)
 		{
 			m_Tiles[tileindex].CollectPowerPellet();
@@ -526,10 +517,10 @@ namespace Pman
 	void Level::StartGame()
 	{
 		m_Player->StartGame();
-		m_RedGhost->StartGame();
-		m_PinkGhost->StartGame();
-		m_CyanGhost->StartGame();
-		m_OrangeGhost->StartGame();
+		//m_RedGhost->StartGame();
+		//m_PinkGhost->StartGame();
+		//m_CyanGhost->StartGame();
+		//m_OrangeGhost->StartGame();
 	}
 	void Level::ProcessAdjacentTiles()
 	{
@@ -537,6 +528,7 @@ namespace Pman
 		size_t line = 0;
 		for (size_t tileindex = 0; tileindex < m_Tiles.size(); tileindex++)
 		{
+			//zero is a valid tile index therefore -1 is the invalid cannot move there!  
 			int32_t left = -1;
 			int32_t right = -1;
 			int32_t top = -1;
