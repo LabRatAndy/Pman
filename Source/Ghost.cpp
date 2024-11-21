@@ -87,35 +87,52 @@ namespace Pman
 				m_PixelPosition.X = 0 + (m_Specification.MoveSpeed * ts);
 			}
 			//update position in tiles
+	
 			if (m_PixelPosition.X % m_Specification.TileSize == 0)
 			{
 				m_Position.X = std::floor(m_PixelPosition.X / m_Specification.TileSize);
+				m_SafeToModeSwitchX = true;
+			}
+			else
+			{
+				m_SafeToModeSwitchX = false;
 			}
 			if (m_PixelPosition.Y % m_Specification.TileSize == 0)
 			{
 				m_Position.Y = std::floor(m_PixelPosition.Y / m_Specification.TileSize);
+				m_SafeToModeSwitchY = true;
+			}
+			else
+			{
+				m_SafeToModeSwitchY = false;
 			}
 
 		}
 		{
 			//update timers and modes ready for next frame only scatter and chase here not frightned(isblue status) or eaten (Eyesonly status this is handled at the top of function currently 
-			//if (m_ModeTimer > 5.0f) //not mode switching after 30 seconds not prototypical, for testing 
-			//{
-			//	std::cout << "Mode switch!" << std::endl;
-			//	if (m_Mode == GhostMode::Chase)
-			//	{
-			//		m_Mode = GhostMode::Scatter;
-			//		m_ModeTimer = 0.0f;
-			//		m_Direction.ReverseDirection();
-			//	}
-			//	else if (m_Mode == GhostMode::Scatter)
-			//	{
-			//		m_Mode = GhostMode::Chase;
-			//		m_ModeTimer = 0.0f;
-			//		m_Direction.ReverseDirection();
-			//	}
-			//}
-			//m_ModeTimer += ts;
+			if (m_ModeTimer > 5.0f)
+			{
+				m_ModeTimerUp = true;
+			}
+			if (m_ModeTimerUp && m_SafeToModeSwitchX && m_SafeToModeSwitchY)
+			{
+				LOG("Mode switch!");
+				if (m_Mode == GhostMode::Chase)
+				{
+					m_Mode = GhostMode::Scatter;
+					m_ModeTimer = 0.0f;
+					m_Direction.ReverseDirection();
+
+				}
+				else if (m_Mode == GhostMode::Scatter)
+				{
+					m_Mode = GhostMode::Chase;
+					m_ModeTimer = 0.0f;
+					m_Direction.ReverseDirection();
+				}
+				m_ModeTimerUp = false;
+			}
+			m_ModeTimer += ts;
 		}
 
 	}

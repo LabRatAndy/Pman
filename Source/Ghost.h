@@ -79,7 +79,9 @@ namespace Pman
 		uint32_t m_AttackWave = 0;
 		bool m_CanUseDoor = false;
 		int32_t m_TileToMoveToIndex = -1;
-		
+		bool m_ModeTimerUp = false;
+		bool m_SafeToModeSwitchX = false;
+		bool m_SafeToModeSwitchY = false;
 
 		void UpdateTarget();
 		void FindPath(const Vec2<int32_t>& tile);
