@@ -67,17 +67,19 @@ namespace Pman
 	{
 		if (!std::filesystem::exists(filename))
 		{
-			std::cerr << "The Sprite file " << filename << " does not exist!" << std::endl;
+			std::string strfilename = filename.generic_string();
+			WARN("The sprite file {} does not exist", strfilename.c_str());;
 			return nullptr;
 		}
 		if (m_SpriteCount > MAX_SPTITES)
 		{
-			std::cerr << "Maximum sprite count of 10 has been exceeded by sprite file " << filename << std::endl;
+			std::string strfilename = filename.generic_string();
+			WARN("Maximum number of sprites, was exceeded by sprite file {}", strfilename.c_str());
 			return nullptr;
 		}
 		if (type == SpriteType::None)
 		{
-			std::cerr << "invalid sprite type" << std::endl;
+			WARN("Invalid sprite type given!");
 			return nullptr;
 		}
 		std::string pathstring = filename.string();
@@ -120,7 +122,7 @@ namespace Pman
 		else
 		{
 			// unsupported format
-			std::cerr << "Unsupported image format" << std::endl;
+			WARN("unsupported sprite texture file format");
 			UnloadImage(image);
 			delete[] imagebuffer;
 			return nullptr;

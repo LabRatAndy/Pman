@@ -116,7 +116,7 @@ namespace Pman
 			}
 			if (m_ModeTimerUp && m_SafeToModeSwitchX && m_SafeToModeSwitchY)
 			{
-				LOG("Mode switch!");
+				TRACE("Mode Switch");
 				if (m_Mode == GhostMode::Chase)
 				{
 					m_Mode = GhostMode::Scatter;

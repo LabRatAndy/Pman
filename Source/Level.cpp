@@ -243,7 +243,7 @@ namespace Pman
 					break;
 				}
 				default:
-					ASSERT(false, "Invalid level data supplied!");
+					ERROR("Invalid level data supplied at col: {}, row: {}", (uint32_t)column, (uint32_t)row);
 					break;
 				}
 				tilecount++;

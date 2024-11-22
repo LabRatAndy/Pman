@@ -2,6 +2,7 @@
 #include"Window.h"
 #include"Renderer.h"
 #include "Level.h"
+#include "Assert.h"
 
 namespace Pman
 {
