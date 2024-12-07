@@ -20,6 +20,7 @@ namespace Pman
 	}
 	void Ghost::OnUpdate(float ts)
 	{
+		TRACE("New frame on update\n");
 		if (m_Status == GhostStatus::NotStarted) //the game is not running!
 			return;
 		if (m_Status == GhostStatus::IsBlue)
@@ -33,7 +34,7 @@ namespace Pman
 		}
 		UpdateTarget();
 		ASSERT((m_Target.X <= m_Specification.LevelCallback->GetLevelWidthInTiles()), "Error invalid target width");
-		ASSERT((m_Target.Y <= m_Specification.LevelCallback->GetLevelHeightInTiles()), "Error invalid target height");
+		ASSERT((m_Target.Y <= m_Specification.LevelCallback->GetLevelHeightInTiles()), "Error invalid target height")
 		//work out direction to take
 		{
 			if (ts < 0.001)
@@ -42,6 +43,8 @@ namespace Pman
 			}
 			FindPath(m_Position);
 			const auto& tile = m_Specification.LevelCallback->GetTile(m_TileToMoveToIndex);
+			TRACE("Current position is: {},{}", (int32_t)m_Position.X, (int32_t)m_Position.Y);
+			TRACE("Tile to move to is: {},{}", tile.GetTileXPosition(), tile.GetTileYPosition());
 			if (m_Position.X > tile.GetTileXPosition() && m_Direction.X != 1)
 			{
 				//need togo left
@@ -66,6 +69,35 @@ namespace Pman
 				m_Direction.X = 0;
 				m_Direction.Y = 1;
 			}
+			else
+			{
+				//need to reverse the direction of the ghost 
+				WARN("Fell thorugh to allow reverse section, please check carefully that this is correct");
+				if (m_Position.X > tile.GetTileXPosition())
+				{
+					//need togo left
+					m_Direction.X = -1;
+					m_Direction.Y = 0;
+				}
+				else if (m_Position.X < tile.GetTileXPosition())
+				{
+					//need togo right
+					m_Direction.X = 1;
+					m_Direction.Y = 0;
+				}
+				else if (m_Position.Y > tile.GetTileYPosition())
+				{
+					//need togo up
+					m_Direction.X = 0;
+					m_Direction.Y = -1;
+				}
+				else if (m_Position.Y < tile.GetTileYPosition())
+				{
+					//need togo down
+					m_Direction.X = 0;
+					m_Direction.Y = 1;
+				}
+			}
 			if (m_Position == m_Target)
 			{
 				//stop moveing as we are all ready at target
@@ -75,42 +107,49 @@ namespace Pman
 		}
 		{
 			//now move the ghost 
-			m_PixelPosition.X = m_PixelPosition.X + (m_Direction.X * (m_Specification.MoveSpeed * ts));
-			m_PixelPosition.Y = m_PixelPosition.Y + (m_Direction.Y * (m_Specification.MoveSpeed * ts));
+			TRACE("Movespeed is: {} Timestep is: {}", (float)m_Specification.MoveSpeed, (float)ts);
+			TRACE("Initial Pixel Position: {},{}", (int32_t)m_PixelPosition.X, (int32_t)m_PixelPosition.Y);
+			m_PixelPosition.X = m_PixelPosition.X + static_cast<int32_t>(m_Direction.X * (m_Specification.MoveSpeed * ts));
+			m_PixelPosition.Y = m_PixelPosition.Y + static_cast<int32_t>(m_Direction.Y * (m_Specification.MoveSpeed * ts));
+			TRACE("New pixel position: {},{}", (int32_t)m_PixelPosition.X, (int32_t)m_PixelPosition.Y);
 			//check for going though the tunnel from 1 size to the other
 			if (m_PixelPosition.X <= 0)
 			{
-				m_PixelPosition.X = (m_Specification.MoveSpeed * ts) - m_Specification.LevelCallback->GetAbsoluteWidth();
+				m_PixelPosition.X = (static_cast<int32_t>(m_Specification.MoveSpeed * ts) - m_Specification.LevelCallback->GetAbsoluteWidth());
 			}
 			else if (m_PixelPosition.X >= m_Specification.LevelCallback->GetAbsoluteWidth())
 			{
-				m_PixelPosition.X = 0 + (m_Specification.MoveSpeed * ts);
+				m_PixelPosition.X = 0 + static_cast<int32_t>(m_Specification.MoveSpeed * ts);
 			}
 			//update position in tiles
 	
 			if (m_PixelPosition.X % m_Specification.TileSize == 0)
 			{
-				m_Position.X = std::floor(m_PixelPosition.X / m_Specification.TileSize);
+				m_Position.X = static_cast<int32_t>(std::floor(m_PixelPosition.X / m_Specification.TileSize));
+				TRACE("Safe to mode switch!");
 				m_SafeToModeSwitchX = true;
 			}
 			else
 			{
+				TRACE("Not safe to mode switch. Pixel pos: {}, {}", (int32_t)m_PixelPosition.X, (int32_t)m_PixelPosition.Y);
 				m_SafeToModeSwitchX = false;
 			}
 			if (m_PixelPosition.Y % m_Specification.TileSize == 0)
 			{
-				m_Position.Y = std::floor(m_PixelPosition.Y / m_Specification.TileSize);
+				m_Position.Y = static_cast<int32_t>(std::floor(m_PixelPosition.Y / m_Specification.TileSize));
+				TRACE("Safe to mode switch!");
 				m_SafeToModeSwitchY = true;
 			}
 			else
 			{
+				TRACE("Not safe to mode switch. Pixel pos: {}, {}", (int32_t)m_PixelPosition.X, (int32_t)m_PixelPosition.Y);
 				m_SafeToModeSwitchY = false;
 			}
 
 		}
 		{
 			//update timers and modes ready for next frame only scatter and chase here not frightned(isblue status) or eaten (Eyesonly status this is handled at the top of function currently 
-			if (m_ModeTimer > 5.0f)
+			if (m_ModeTimer > 10.0f)
 			{
 				m_ModeTimerUp = true;
 			}
@@ -200,6 +239,7 @@ namespace Pman
 			{
 				//The ghost has a specific corner of the map send it there
 				m_Target = m_Specification.ScatterPosition;
+				TRACE("Scatter mode target set to {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
 				return;
 			}
 			else if (m_Mode == GhostMode::Chase)
@@ -209,10 +249,12 @@ namespace Pman
 				{
 				case GhostType::Red: // Targets pacman 
 					m_Target = m_Specification.LevelCallback->GetPacmanPosition();
+					TRACE("Red Ghost chase mode target set to be: {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
 					return;
 					break;
 				case GhostType::Cyan: // 2nd cell in fromt of the pacman then double the vector from red ghost
 				{
+					//need to check that selected tile is not a wall and actually reachable 
 					auto pmanpos = m_Specification.LevelCallback->GetPacmanPosition();
 					auto direction = m_Specification.LevelCallback->GetPacmanDirection();
 					pmanpos.X += direction.X * 2;
@@ -224,23 +266,43 @@ namespace Pman
 					m_Target.Y = pmanpos.Y + (2 * answerY);
 					m_Target.X = std::clamp(m_Target.X, static_cast<int32_t>(0), static_cast<int32_t>(m_Specification.LevelCallback->GetLevelWidthInTiles()));
 					m_Target.Y = std::clamp(m_Target.Y, static_cast<int32_t>(0), static_cast<int32_t>(m_Specification.LevelCallback->GetLevelHeightInTiles()));
+					TRACE("Cyan Ghost chase mode target set to be: {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
 					return;
 					break;
 				}
 				case GhostType::Orange: // chase pacman until it gets close(3 tiles) then goes to scatter mode
 				{
-					float mindistance = 3.0f * m_Specification.TileSize;
 					auto pacmanposition = m_Specification.LevelCallback->GetPacmanPosition();
-					float distancetopacman = (float)std::sqrt((float)std::pow(m_Position.X - pacmanposition.X, 2) + (float)std::pow(m_Position.Y - pacmanposition.Y, 2));
-					if (mindistance <= distancetopacman)
+					int32_t xdifference = std::abs(pacmanposition.X - m_Position.X);
+					int32_t ydifference = std::abs(pacmanposition.Y - m_Position.Y);
+					if (xdifference >= 3 || ydifference >= 3)
 					{
-						m_Target = pacmanposition;
-						return;
+						if (m_SafeToModeSwitchX && m_SafeToModeSwitchY)
+						{
+							m_Target = pacmanposition;
+							TRACE("Orange Ghost chase mode target set to be: {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
+							return;
+						}
+						else
+						{
+							TRACE("*******************Orange ghost not safe to change mode. Leave target as was");
+							return;	
+						}
 					}
 					else
 					{
-						m_Target = m_Specification.ScatterPosition;
-						return;
+						if (m_SafeToModeSwitchX && m_SafeToModeSwitchY)
+						{
+							m_Target = m_Specification.ScatterPosition;
+							TRACE("Orange Ghost chase mode target set to be: {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
+							return;
+						}
+						else
+						{
+							TRACE("####################Orange ghost not safe to change mode. Leave target as was");
+							return;
+						}
+
 					}
 					break;
 				}
@@ -248,8 +310,20 @@ namespace Pman
 				{
 					m_Target = m_Specification.LevelCallback->GetPacmanPosition();
 					auto direction = m_Specification.LevelCallback->GetPacmanDirection();
-					m_Target.X += direction.X * (m_Specification.TileSize * 4);
-					m_Target.Y += direction.Y * (m_Specification.TileSize * 4);
+					if (direction.X != 0)
+					{
+						m_Target.X += direction.X * 4;
+					}
+					else if (direction.Y != 0)
+					{
+						m_Target.Y += direction.Y * 4;
+					}
+					else
+					{
+						// pacpman isn't moving
+						m_Target.X += 4;
+					}
+					TRACE("Pink Ghost chase mode target set to be: {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
 					return;
 					break;
 				}
