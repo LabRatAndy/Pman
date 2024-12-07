@@ -17,9 +17,9 @@ namespace Pman
 	struct TileSpecification
 	{
 		TileType Type = TileType::Invaild;
-		uint32_t XPosition = 0; // Grid position where 0,0 is top left corner tile
-		uint32_t YPosition = 0;	// Grid position where 0,0 is top left corner tile
-		uint32_t TileSize = 0;
+		int32_t XPosition = 0; // Grid position where 0,0 is top left corner tile
+		int32_t YPosition = 0;	// Grid position where 0,0 is top left corner tile
+		int32_t TileSize = 0;
 		Sprite* Texture = nullptr;
 	};
 
@@ -32,13 +32,13 @@ namespace Pman
 		void CollectGem();
 		void CollectPowerPellet();
 
-		uint32_t GetTileXPosition() const { return m_XPosition; }
-		uint32_t GetTileYPosition() const { return m_YPosition; }
+		int32_t GetTileXPosition() const { return m_XPosition; }
+		int32_t GetTileYPosition() const { return m_YPosition; }
 
-		uint32_t GetAbsoluteXPosition() const { return m_XPosition * m_TileSize; }
-		uint32_t GetAbsoluteYPosition() const { return m_YPosition * m_TileSize; }
+		int32_t GetAbsoluteXPosition() const { return m_XPosition * m_TileSize; }
+		int32_t GetAbsoluteYPosition() const { return m_YPosition * m_TileSize; }
 
-		uint32_t GetTileSize() const { return m_TileSize; }
+		int32_t GetTileSize() const { return m_TileSize; }
 
 		TileType GetTileType() const { return m_Type; }
 		Sprite* GetSprite() const { return m_Sprite; }
@@ -48,11 +48,11 @@ namespace Pman
 
 	private:
 		TileType m_Type = TileType::Invaild;
-		uint32_t m_XPosition = 0;
-		uint32_t m_YPosition = 0;
-		uint32_t m_TileSize = 0;
+		int32_t m_XPosition = 0;
+		int32_t m_YPosition = 0;
+		int32_t m_TileSize = 0;
 		Sprite* m_Sprite = nullptr;
-		std::array<int32_t, 4> m_AdjacentTiles = { -1,-1,-1,-1 };
+		std::array<int32_t, 4> m_AdjacentTiles = { { -1,-1, -1,-1 } };
 
 	};
 }

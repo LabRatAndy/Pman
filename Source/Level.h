@@ -49,12 +49,12 @@ namespace Pman
 
 		//void Reset();
 
-		uint32_t GetLevelWidthInTiles() const { return m_LevelWidth; }
-		uint32_t GetLevelHeightInTiles() const { return m_LevelHeight; }
-		uint32_t GetLevelTileSize() const { return m_TileSize; }
+		int32_t GetLevelWidthInTiles() const { return m_LevelWidth; }
+		int32_t GetLevelHeightInTiles() const { return m_LevelHeight; }
+		int32_t GetLevelTileSize() const { return m_TileSize; }
 		//Absolute size getters return size in pixels
-		uint32_t GetAbsoluteWidth() const { return m_LevelWidth * m_TileSize; }
-		uint32_t GetAbsoluteHeight() const { return m_LevelHeight * m_TileSize; }
+		int32_t GetAbsoluteWidth() const { return m_LevelWidth * m_TileSize; }
+		int32_t GetAbsoluteHeight() const { return m_LevelHeight * m_TileSize; }
 
 		// these will likely need to be reviewed
 		bool CollideWithWall(const Vec2<int32_t>& position, const Vec2<int32_t>& direction, bool canusedoor);
@@ -96,10 +96,10 @@ namespace Pman
 
 	private:
 		//height and width in tiles
-		uint32_t m_LevelWidth = 0;
-		uint32_t m_LevelHeight = 0;
+		int32_t m_LevelWidth = 0;
+		int32_t m_LevelHeight = 0;
 		//tile size in pixels they are always square  ie 32 is a tile 32px * 32 px.
-		uint32_t m_TileSize = 0;
+		int32_t m_TileSize = 0;
 
 		//tile vector
 		std::vector<Tile> m_Tiles;

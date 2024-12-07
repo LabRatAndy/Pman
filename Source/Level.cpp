@@ -84,8 +84,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Wall;
-					spec.XPosition = column;
-					spec.YPosition = row;
+					spec.XPosition = static_cast<int32_t>(column);
+					spec.YPosition = static_cast<int32_t>(row);
 					m_Tiles.emplace(it, spec);
 					break;
 				}
@@ -94,8 +94,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Door;
-					spec.XPosition = column;
-					spec.YPosition = row;
+					spec.XPosition = static_cast<int32_t>(column);
+					spec.YPosition = static_cast<int32_t>(row);
 					m_Tiles.emplace(it, spec);
 					doorx = column;
 					doory = row;
@@ -106,8 +106,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Gem;
-					spec.XPosition = column;
-					spec.YPosition = row;
+					spec.XPosition = static_cast<int32_t>(column);
+					spec.YPosition = static_cast<int32_t>(row);
 					spec.Texture = m_GemSprite;
 					m_Tiles.emplace(it, spec);
 					break;
@@ -117,8 +117,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::PowerPellet;
-					spec.XPosition = column;
-					spec.YPosition = row;
+					spec.XPosition = static_cast<int32_t>(column);
+					spec.YPosition = static_cast<int32_t>(row);
 					spec.Texture = m_PowerPelletSprite;
 					m_Tiles.emplace(it, spec);
 					break;
@@ -140,8 +140,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = column;
-					spec.YPosition = row;
+					spec.XPosition = static_cast<int32_t>(column);
+					spec.YPosition = static_cast<int32_t>(row);
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -153,7 +153,7 @@ namespace Pman
 					gspec.EyesSprite = m_GhostEyesSprite;
 					gspec.InitialPosition = { static_cast<int32_t>(column),static_cast<int32_t>(row) };
 					gspec.LevelCallback = this;
-					gspec.MoveSpeed = 10.0f;
+					gspec.MoveSpeed = 61.0f;
 					gspec.ScatterPosition = { 2,1 };
 					gspec.TileSize = m_TileSize;
 					gspec.Type = GhostType::Pink;
@@ -162,8 +162,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = column;
-					spec.YPosition = row;
+					spec.XPosition = static_cast<int32_t>(column);
+					spec.YPosition = static_cast<int32_t>(row);
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -175,7 +175,7 @@ namespace Pman
 					gspec.EyesSprite = m_GhostEyesSprite;
 					gspec.InitialPosition = { static_cast<int32_t>(column),static_cast<int32_t>(row) };
 					gspec.LevelCallback = this;
-					gspec.MoveSpeed = 10.0f;
+					gspec.MoveSpeed = 61.0f;
 					gspec.ScatterPosition = { 18,19 };
 					gspec.TileSize = m_TileSize;
 					gspec.Type = GhostType::Cyan;
@@ -184,8 +184,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = column;
-					spec.YPosition = row;
+					spec.XPosition = static_cast<int32_t>(column);
+					spec.YPosition = static_cast<int32_t>(row);
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -197,7 +197,7 @@ namespace Pman
 					gspec.EyesSprite = m_GhostEyesSprite;
 					gspec.InitialPosition = { static_cast<int32_t>(column),static_cast<int32_t>(row) };
 					gspec.LevelCallback = this;
-					gspec.MoveSpeed = 10.0f;
+					gspec.MoveSpeed = 60.0f;
 					gspec.ScatterPosition = { 2,19 };
 					gspec.TileSize = m_TileSize;
 					gspec.Type = GhostType::Orange;
@@ -206,8 +206,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = column;
-					spec.YPosition = row;
+					spec.XPosition = static_cast<int32_t>(column);
+					spec.YPosition = static_cast<int32_t>(row);
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -227,8 +227,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = column;
-					spec.YPosition = row;
+					spec.XPosition = static_cast<int32_t>(column);
+					spec.YPosition = static_cast<int32_t>(row);
 					m_Tiles.emplace(it, spec);
 				}
 					break;
@@ -237,8 +237,8 @@ namespace Pman
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
 					spec.Type = TileType::Empty;
-					spec.XPosition = column;
-					spec.YPosition = row;
+					spec.XPosition = static_cast<int32_t>(column);
+					spec.YPosition = static_cast<int32_t>(row);
 					m_Tiles.emplace(it, spec);
 					break;
 				}
@@ -258,8 +258,8 @@ namespace Pman
 		m_Player->OnUpdate(ts);
 		//m_CyanGhost->OnUpdate(ts);
 		m_RedGhost->OnUpdate(ts);
-		//m_PinkGhost->OnUpdate(ts);
-		//m_OrangeGhost->OnUpdate(ts);
+		m_PinkGhost->OnUpdate(ts);
+		m_OrangeGhost->OnUpdate(ts);
 	}
 	void Level::OnRender()
 	{
@@ -279,6 +279,8 @@ namespace Pman
 		m_PinkGhost->OnRender();
 		m_OrangeGhost->OnRender();
 	}
+#pragma warning (push)
+#pragma warning (disable : 4100)
 	/// <summary>
 	/// Checks if you will collide with a wall 
 	/// </summary>
@@ -291,10 +293,10 @@ namespace Pman
 		//convert to tile space 
 		float tilex = static_cast<float>(position.X) / static_cast<float>(m_TileSize);
 		float tiley = static_cast<float>(position.Y) / static_cast<float>(m_TileSize);
-		int32_t lowx = std::floor(tilex);
-		int32_t highx = std::ceil(tilex);
-		int32_t lowy = std::floor(tiley);
-		int32_t highy = std::ceil(tiley);
+		int32_t lowx = static_cast<int32_t>(std::floor(tilex));
+		int32_t highx = static_cast<int32_t>(std::ceil(tilex));
+		int32_t lowy = static_cast<int32_t>(std::floor(tiley));
+		int32_t highy = static_cast<int32_t>(std::ceil(tiley));
 		std::array<uint32_t, 4> tileindices;
 		tileindices[0] = GetTileIndex({ lowx,lowy }, m_LevelWidth);			//Top left
 		tileindices[1] = GetTileIndex({ lowx, highy }, m_LevelWidth);		//bottom left
@@ -331,10 +333,10 @@ namespace Pman
 		}
 		return false;
 	}
-
+#pragma warning(pop)
 	bool Level::CollideWithWall(const uint32_t& tilex, const uint32_t& tiley, const Vec2<int32_t>& direction, const bool& canusedoor)
 	{
-		size_t tileindex = -1;
+		size_t tileindex = static_cast<size_t>(-1);
 		if (direction.X == -1)
 		{
 			tileindex = GetTileArrayIndexofTile(tilex - 1, tiley, m_LevelWidth);
@@ -518,9 +520,9 @@ namespace Pman
 	{
 		m_Player->StartGame();
 		m_RedGhost->StartGame();
-		//m_PinkGhost->StartGame();
-		//m_CyanGhost->StartGame();
-		//m_OrangeGhost->StartGame();
+		m_PinkGhost->StartGame();
+		m_CyanGhost->StartGame();
+		m_OrangeGhost->StartGame();
 	}
 	void Level::ProcessAdjacentTiles()
 	{
