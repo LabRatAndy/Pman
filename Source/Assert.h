@@ -25,8 +25,8 @@ namespace Pman
 	};
 	template<ErrorLevel L, typename ... Args>
 	struct Log {};
-	template<ErrorLevel L, typename ...Args>
-	struct Log<L,const char*, Args ...>
+	template<ErrorLevel L, typename ... Args>
+	struct Log<L ,const char*, Args ...>
 	{
 		Log(const char* msg, Args &&... args, std::source_location loc = std::source_location::current())
 		{
