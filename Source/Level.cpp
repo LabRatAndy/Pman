@@ -256,10 +256,10 @@ namespace Pman
 	void Level::OnUpdate(float ts)
 	{
 		m_Player->OnUpdate(ts);
-		//m_CyanGhost->OnUpdate(ts);
+		m_CyanGhost->OnUpdate(ts);
 		m_RedGhost->OnUpdate(ts);
-		m_PinkGhost->OnUpdate(ts);
-		m_OrangeGhost->OnUpdate(ts);
+		//m_PinkGhost->OnUpdate(ts);
+		//m_OrangeGhost->OnUpdate(ts);
 	}
 	void Level::OnRender()
 	{

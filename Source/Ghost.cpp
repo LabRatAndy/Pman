@@ -257,13 +257,23 @@ namespace Pman
 					//need to check that selected tile is not a wall and actually reachable 
 					auto pmanpos = m_Specification.LevelCallback->GetPacmanPosition();
 					auto direction = m_Specification.LevelCallback->GetPacmanDirection();
-					pmanpos.X += direction.X * 2;
-					pmanpos.Y += direction.Y * 2;
 					auto redghostpos = m_Specification.LevelCallback->GetRedGhostPosition();
+					//check that pacman is moving 
+					if (direction.X == 0 && direction.Y == 0)
+					{
+						pmanpos.X += 2;
+					}
+					else
+					{
+						pmanpos.X += direction.X * 2;
+						pmanpos.Y += direction.Y * 2;
+					}
 					int32_t answerX = redghostpos.X - pmanpos.X;
-					int32_t answerY = redghostpos.Y - pmanpos.Y;
-					m_Target.X = pmanpos.X + (2 * answerX);
-					m_Target.Y = pmanpos.Y + (2 * answerY);
+					int32_t answerY = -(redghostpos.Y - pmanpos.Y); //needs to be inverted due to origin being in the top left not bottom left.
+					TRACE("answer values are: {}, {}", (int32_t)answerX, (int32_t)answerY);
+					m_Target.X = redghostpos.X + (2 * answerX);
+					m_Target.Y = redghostpos.Y + (2 * answerY);
+					TRACE("Position of double the length of vector from RED to 2 spaces in front of pacman: {}, {}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
 					m_Target.X = std::clamp(m_Target.X, static_cast<int32_t>(0), static_cast<int32_t>(m_Specification.LevelCallback->GetLevelWidthInTiles()));
 					m_Target.Y = std::clamp(m_Target.Y, static_cast<int32_t>(0), static_cast<int32_t>(m_Specification.LevelCallback->GetLevelHeightInTiles()));
 					TRACE("Cyan Ghost chase mode target set to be: {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
