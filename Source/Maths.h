@@ -1,5 +1,6 @@
 #pragma once
 #include "Assert.h"
+#include <cmath>
 
 namespace Pman
 {
@@ -64,7 +65,23 @@ namespace Pman
 			}
 			return false;
 		}
+		float Length() const
+		{
+			return static_cast<float>(std::hypot(X, Y));
+		}
+		void Normalise()
+		{
+			float length = this->Length();
+			X = static_cast<T>(X / length);
+			Y = static_cast<T>(Y / length);
+		}
+		void operator*(const int32_t scalar)
+		{
+			X = X * scalar;
+			Y = Y * scalar;
+		}
 	};
+
 	template<typename T>
 	struct Vec3
 	{
