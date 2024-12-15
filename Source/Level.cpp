@@ -242,6 +242,16 @@ namespace Pman
 					m_Tiles.emplace(it, spec);
 					break;
 				}
+				case 'i':
+				{
+					TileSpecification spec{};
+					spec.TileSize = m_TileSize;
+					spec.Type = TileType::Invaild;
+					spec.XPosition = static_cast<int32_t>(column);
+					spec.YPosition = static_cast<int32_t>(row);
+					m_Tiles.emplace(it, spec);
+					break;
+				}
 				default:
 					ERROR("Invalid level data supplied at col: {}, row: {}", (uint32_t)column, (uint32_t)row);
 					break;
@@ -258,8 +268,8 @@ namespace Pman
 		m_Player->OnUpdate(ts);
 		m_CyanGhost->OnUpdate(ts);
 		m_RedGhost->OnUpdate(ts);
-		//m_PinkGhost->OnUpdate(ts);
-		//m_OrangeGhost->OnUpdate(ts);
+		m_PinkGhost->OnUpdate(ts);
+		m_OrangeGhost->OnUpdate(ts);
 	}
 	void Level::OnRender()
 	{
