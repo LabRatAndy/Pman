@@ -11,6 +11,34 @@
 
 namespace Pman
 {
+	static void ReduceTargetVector(Vec2<int32_t>& target, const Vec2<int32_t>& direction)
+	{
+		//work out which is the greater X or Y
+		if (direction.X < direction.Y)
+		{
+			float reductionvalue = static_cast<float>(direction.Y) / static_cast<float>(direction.X);
+			target.X = target.X - 1;
+			target.Y = static_cast<int32_t>(std::round(target.Y - reductionvalue));
+		}
+		else
+		{
+			float reductionvalue = static_cast<float>(direction.X) / static_cast<float>(direction.Y);
+			target.Y = target.Y - 1;
+			target.X = static_cast<int32_t>(std::round(target.X - reductionvalue));
+		}
+	}
+	bool Ghost::TileIsAbleToMoveTo(const Vec2<int32_t>& target) const
+	{
+		if (target.X >= 0 && target.X < m_Specification.LevelCallback->GetLevelWidthInTiles() && target.Y >= 0 && target.Y < m_Specification.LevelCallback->GetLevelHeightInTiles())
+		{
+			const Tile& tile = m_Specification.LevelCallback->GetTile(GetTileIndex(target, m_Specification.LevelCallback->GetLevelWidthInTiles()));
+			if (tile.GetTileType() == TileType::Gem || tile.GetTileType() == TileType::PowerPellet || tile.GetTileType() == TileType::Empty)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	Ghost::Ghost(const GhostSpecification& spec) : m_Status(GhostStatus::NotStarted), m_Mode(GhostMode::Scatter), m_Specification(spec), m_Position(spec.InitialPosition), m_PixelPosition({ static_cast<int32_t>(spec.InitialPosition.X * spec.TileSize),static_cast<int32_t>(spec.InitialPosition.Y * spec.TileSize) })
 	{
@@ -256,26 +284,29 @@ namespace Pman
 				{
 					//need to check that selected tile is not a wall and actually reachable 
 					auto pmanpos = m_Specification.LevelCallback->GetPacmanPosition();
-					auto direction = m_Specification.LevelCallback->GetPacmanDirection();
+					auto pmandirection = m_Specification.LevelCallback->GetPacmanDirection();
 					auto redghostpos = m_Specification.LevelCallback->GetRedGhostPosition();
 					//check that pacman is moving 
-					if (direction.X == 0 && direction.Y == 0)
+					if (pmandirection.X == 0 && pmandirection.Y == 0)
 					{
 						pmanpos.X += 2;
 					}
 					else
 					{
-						pmanpos.X += direction.X * 2;
-						pmanpos.Y += direction.Y * 2;
+						pmanpos.X += pmandirection.X * 2;
+						pmanpos.Y += pmandirection.Y * 2;
 					}
-					int32_t answerX = redghostpos.X - pmanpos.X;
-					int32_t answerY = -(redghostpos.Y - pmanpos.Y); //needs to be inverted due to origin being in the top left not bottom left.
-					TRACE("answer values are: {}, {}", (int32_t)answerX, (int32_t)answerY);
-					m_Target.X = redghostpos.X + (2 * answerX);
-					m_Target.Y = redghostpos.Y + (2 * answerY);
+					Vec2<int32_t> direction{ (redghostpos.X - pmanpos.X),-(redghostpos.Y - pmanpos.Y) }; //Y needs to be inverted due to origin being in the top left not bottom left.
+					direction * 2;
+					TRACE("answer values are: {}, {}", (int32_t)direction.X, (int32_t)direction.Y);
+					m_Target.X = redghostpos.X + direction.X;
+					m_Target.Y = redghostpos.Y + direction.Y;
 					TRACE("Position of double the length of vector from RED to 2 spaces in front of pacman: {}, {}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
-					m_Target.X = std::clamp(m_Target.X, static_cast<int32_t>(0), static_cast<int32_t>(m_Specification.LevelCallback->GetLevelWidthInTiles()));
-					m_Target.Y = std::clamp(m_Target.Y, static_cast<int32_t>(0), static_cast<int32_t>(m_Specification.LevelCallback->GetLevelHeightInTiles()));
+					//check if it is valid to move to the target tile 
+					while (!TileIsAbleToMoveTo(m_Target))
+					{
+						ReduceTargetVector(m_Target, direction);
+					}
 					TRACE("Cyan Ghost chase mode target set to be: {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
 					return;
 					break;

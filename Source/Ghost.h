@@ -85,5 +85,6 @@ namespace Pman
 
 		void UpdateTarget();
 		void FindPath(const Vec2<int32_t>& tile);
+		bool TileIsAbleToMoveTo(const Vec2<int32_t>& target) const;
 	};
 }
