@@ -62,8 +62,22 @@ namespace Pman
 			//check if colliding with a wall, gem, etc. Before applying the movement also add check to see if has been caught by a ghost and then loose a life. Pacman cannot use the door so last parameter has to be false 
 			if (!m_Specification.LevelCallback->CollideWithWall({ static_cast<int32_t>(newXposition),static_cast<int32_t>(newYposition) }, m_Direction, false))
 			{
-				m_PixelPosition.X = static_cast<int32_t>(newXposition);
-				m_PixelPosition.Y = static_cast<int32_t>(newYposition);
+				if (m_Direction.X == -1)
+				{
+					m_PixelPosition.X = static_cast<int32_t>(std::floor(newXposition));
+				}
+				else
+				{
+					m_PixelPosition.X = static_cast<int32_t>(std::ceil(newXposition));
+				}
+				if (m_Direction.Y == -1)
+				{
+					m_PixelPosition.Y = static_cast<int32_t>(std::floor(newYposition));;
+				}
+				else
+				{
+					m_PixelPosition.Y = static_cast<int32_t>(std::ceil(newYposition));
+				}
 			}
 		}
 		//update m_Position
