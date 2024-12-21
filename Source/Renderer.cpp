@@ -42,7 +42,10 @@ namespace Pman
 	{
 		ASSERT(sprite, "Sprite cannot be nullptr");
 		Texture2D& texture = m_Sprites->Sprites[sprite->SpriteID];
-		DrawTexture(texture, xpos, ypos, WHITE);
+		Rectangle source{ 0.0f,0.0f,static_cast<float>(texture.width),static_cast<float>(texture.height) };
+		Rectangle dest{ static_cast<float>(xpos + tilesize / 2),static_cast<float>(ypos + tilesize / 2),static_cast<float>(texture.width),static_cast<float>(texture.height) };
+		Vector2 origin{ dest.width / 2,dest.height / 2 };
+		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 		
 	}
 #pragma warning (pop)
