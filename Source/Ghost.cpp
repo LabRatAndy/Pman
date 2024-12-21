@@ -307,6 +307,7 @@ namespace Pman
 					//check if it is valid to move to the target tile 
 					while (!TileIsAbleToMoveTo(m_Target))
 					{
+						TRACE("In Cyan ghost reduction loop");
 						ReduceTargetVector(m_Target, direction);
 					}
 					TRACE("Cyan Ghost chase mode target set to be: {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
@@ -342,20 +343,41 @@ namespace Pman
 				}
 				case GhostType::Pink: //chase 4 tiles in front of pacman. Need to do clamping as could be possible to get value outside of the map!!
 				{
-					m_Target = m_Specification.LevelCallback->GetPacmanPosition();
+					auto pmanpos = m_Specification.LevelCallback->GetPacmanPosition();
 					auto direction = m_Specification.LevelCallback->GetPacmanDirection();
 					if (direction.X != 0)
 					{
-						m_Target.X += direction.X * 4;
+						m_Target.X = pmanpos.X + (direction.X * 4);
+						m_Target.Y = pmanpos.Y;
 					}
 					else if (direction.Y != 0)
 					{
-						m_Target.Y += direction.Y * 4;
+						m_Target.Y = pmanpos.Y + (direction.Y * 4);
+						m_Target.X = pmanpos.X;
 					}
 					else
 					{
 						// pacpman isn't moving
-						m_Target.X += 4;
+						m_Target.X = pmanpos.X + 4;
+						m_Target.Y = pmanpos.Y;
+					}
+					//check that the tile is vaild if not reduce number of tile in front so that it is valid
+					int32_t adjustment = 3;
+					while (!TileIsAbleToMoveTo(m_Target))
+					{
+						if (direction.X != 0)
+						{
+							m_Target.X = pmanpos.X + (direction.X * adjustment);
+						}
+						else if (direction.Y != 0)
+						{
+							m_Target.Y = pmanpos.Y + (direction.Y * adjustment);
+						}
+						else
+						{
+							m_Target.X = pmanpos.X + adjustment;
+						}
+						adjustment--;
 					}
 					TRACE("Pink Ghost chase mode target set to be: {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
 					return;
