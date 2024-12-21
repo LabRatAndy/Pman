@@ -80,6 +80,13 @@ namespace Pman
 			X = X * scalar;
 			Y = Y * scalar;
 		}
+		Vec2<T> operator-(const Vec2<T>& other)
+		{
+			T x = X - other.X;
+			T y = Y - other.Y;
+			Vec2<T> retval{ x,y };
+			return retval;
+		}
 	};
 
 	template<typename T>
