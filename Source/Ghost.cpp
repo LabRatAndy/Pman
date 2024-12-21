@@ -243,6 +243,7 @@ namespace Pman
 
 	void Ghost::UpdateTarget()
 	{
+		static bool tooclose = false;
 		if (m_CanUseDoor)
 		{
 			if (m_Position == m_Target)
@@ -268,6 +269,7 @@ namespace Pman
 				//The ghost has a specific corner of the map send it there
 				m_Target = m_Specification.ScatterPosition;
 				TRACE("Scatter mode target set to {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
+				tooclose = false;
 				return;
 			}
 			else if (m_Mode == GhostMode::Chase)
@@ -314,37 +316,28 @@ namespace Pman
 				case GhostType::Orange: // chase pacman until it gets close(3 tiles) then goes to scatter mode
 				{
 					auto pacmanposition = m_Specification.LevelCallback->GetPacmanPosition();
-					int32_t xdifference = std::abs(pacmanposition.X - m_Position.X);
-					int32_t ydifference = std::abs(pacmanposition.Y - m_Position.Y);
-					if (xdifference >= 3 || ydifference >= 3)
+					Vec2<int32_t> diff = pacmanposition - m_Position;
+					float difflength = diff.Length();
+					if (difflength <= 3.0f)
 					{
-						if (m_SafeToModeSwitchX && m_SafeToModeSwitchY)
+						tooclose = true;
+					}
+					else if(m_Position == m_Specification.ScatterPosition)
+					{
+						tooclose = false;
+					}
+					if (m_SafeToModeSwitchX && m_SafeToModeSwitchY)
+					{
+						if (!tooclose)
 						{
 							m_Target = pacmanposition;
-							TRACE("Orange Ghost chase mode target set to be: {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
-							return;
 						}
 						else
-						{
-							TRACE("*******************Orange ghost not safe to change mode. Leave target as was");
-							return;	
-						}
-					}
-					else
-					{
-						if (m_SafeToModeSwitchX && m_SafeToModeSwitchY)
 						{
 							m_Target = m_Specification.ScatterPosition;
-							TRACE("Orange Ghost chase mode target set to be: {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
-							return;
 						}
-						else
-						{
-							TRACE("####################Orange ghost not safe to change mode. Leave target as was");
-							return;
-						}
-
 					}
+					TRACE("Orange ghost chase mode target set to be {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
 					break;
 				}
 				case GhostType::Pink: //chase 4 tiles in front of pacman. Need to do clamping as could be possible to get value outside of the map!!
