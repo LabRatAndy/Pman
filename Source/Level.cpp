@@ -22,9 +22,9 @@ namespace Pman
 		}
 	};
 
-	static bool CheckCollision(int32_t playerleft, int32_t playerright, int32_t playertop, int32_t playerbottom, int32_t tileleft, int32_t tileright, int32_t tiletop, int32_t tilebottom)
+	static bool CheckCollision(const Rect<int32_t>& player, const Rect<int32_t>& tile)
 	{
-		return !(playerright <= tileleft || playerleft >= tileright || playerbottom <= tiletop || playertop >= tilebottom);
+		return !(player.Right <= tile.Left || player.Left >= tile.Right || player.Bottom <= tile.Top || player.Top >= tile.Bottom);
 	}
 
 	Level::Level(const uint32_t tilesize) : m_TileSize(tilesize)
@@ -320,16 +320,13 @@ namespace Pman
 	{
 		TRACE("\nNew collsion check!");
 		// Get the player's bounding box in world space
-		int32_t playerLeft = position.X;
-		int32_t playerRight = position.X + m_TileSize;
-		int32_t playerTop = position.Y;
-		int32_t playerBottom = position.Y + m_TileSize;
-
+		Rect<int32_t> playerrect = { position.X,position.X + m_TileSize,position.Y,position.Y + m_TileSize };
+		
 		// Calculate the tile coordinates the player is interacting with
-		int32_t tileXLeft = playerLeft / m_TileSize;
-		int32_t tileXRight = (playerRight - 1) / m_TileSize;
-		int32_t tileYTop = playerTop / m_TileSize;
-		int32_t tileYBottom = (playerBottom - 1) / m_TileSize;
+		int32_t tileXLeft = playerrect.Left / m_TileSize;
+		int32_t tileXRight = (playerrect.Right - 1) / m_TileSize;
+		int32_t tileYTop = playerrect.Top / m_TileSize;
+		int32_t tileYBottom = (playerrect.Bottom - 1) / m_TileSize;
 		bool retval = false;
 		// Iterate over the tiles the player's bounding box overlaps with
 		for (int32_t x = tileXLeft; x <= tileXRight; ++x)
@@ -337,16 +334,13 @@ namespace Pman
 			for (int32_t y = tileYTop; y <= tileYBottom; ++y)
 			{
 				// Get the tile boundaries in pixels
-				int32_t tileLeft = x * m_TileSize;
-				int32_t tileRight = (x + 1) * m_TileSize;
-				int32_t tileTop = y * m_TileSize;
-				int32_t tileBottom = (y + 1) * m_TileSize;
-
+				Rect tilerect = { x * m_TileSize,(x + 1) * m_TileSize,y * m_TileSize,(y + 1) * m_TileSize };
+				
 				TRACE("Player Position: {}, {}", (int32_t)position.X, (int32_t)position.Y);
-				TRACE("Tile Bounds: Left {}, Right {}, Top {}, Bottom {}", (int32_t)tileLeft, (int32_t)tileRight, (int32_t)tileTop, (int32_t)tileBottom);
+				TRACE("Tile Bounds: Left {}, Right {}, Top {}, Bottom {}", (int32_t)tilerect.Left, (int32_t)tilerect.Right, (int32_t)tilerect.Top, (int32_t)tilerect.Bottom);
 
 				// Check if the player's bounding box intersects with the tile
-				if (CheckCollision(playerLeft, playerRight, playerTop, playerBottom, tileLeft, tileRight, tileTop, tileBottom))
+				if (CheckCollision(playerrect, tilerect))
 				{
 					TRACE("Collsion detectected with tile index: {} at coordinates: {},{}", (uint32_t)GetTileIndex({ x, y }, m_LevelWidth), (int32_t)x, (int32_t)y);
 					// If tile is a wall, prevent movement in that direction
@@ -354,7 +348,7 @@ namespace Pman
 					{
 						TRACE("Tile collided with is a wall");
 						//check collision left	
-						if (playerLeft < tileRight)
+						if (playerrect.Left < tilerect.Right)
 						{
 							if (direction.X == -1)
 							{
@@ -362,7 +356,7 @@ namespace Pman
 							}
 						}
 						//check collision right
-						if (playerRight > tileLeft)
+						if (playerrect.Right > tilerect.Left)
 						{
 							if (direction.X == 1)
 							{
@@ -370,7 +364,7 @@ namespace Pman
 							}
 						}
 						//check collision above
-						if (playerTop < tileBottom)
+						if (playerrect.Top < tilerect.Bottom)
 						{
 							if (direction.Y == -1)
 							{
@@ -378,7 +372,7 @@ namespace Pman
 							}
 						}
 						//check collision below
-						if (playerBottom > tileTop)
+						if (playerrect.Bottom > tilerect.Top)
 						{
 							if (direction.Y == 1)
 							{
