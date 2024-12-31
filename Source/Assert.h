@@ -49,7 +49,7 @@ namespace Pman
 		}
 	};
 	//Template deduction guide
-	template<ErrorLevel L,typename ...Args>
+	template<ErrorLevel L, typename ...Args >
 	Log(Args ...) -> Log<L, Args ...>;
 
 	template<typename ...Args>
