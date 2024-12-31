@@ -57,10 +57,10 @@ namespace Pman
 		int32_t GetAbsoluteHeight() const { return m_LevelHeight * m_TileSize; }
 
 		// these will likely need to be reviewed
-		bool CollideWithWall(const Vec2<int32_t>& position, const Vec2<int32_t>& direction, bool canusedoor);
+		bool CollideWithWall(const Vec2<int32_t>& position, const Vec2<int32_t>& direction);
 		bool CollectGem(const Vec2<int32_t>& position);
 		bool CollectPowerPellet(const Vec2<int32_t>& position);
-		bool CollideWithWall(const uint32_t& tilex, const uint32_t& tiley, const Vec2<int32_t>& direction, const bool& canusedoor);
+		//bool CollideWithWall(const uint32_t& tilex, const uint32_t& tiley, const Vec2<int32_t>& direction, const bool& canusedoor);
 		bool IsTileAWall(const float& x, const float& y,const Vec2<int32_t>& direction, const bool canusedoor) const;
 
 		const std::array<int32_t, 4>& GetAdjacentTileList(size_t tile) const { return m_Tiles[tile].GetAdjacentTile(); }
@@ -95,6 +95,12 @@ namespace Pman
 		}
 
 	private:
+		//constants
+		const size_t TOP_LEFT = 0;
+		const size_t BOTTOM_LEFT = 1;
+		const size_t TOP_RIGHT = 2;
+		const size_t BOTTOM_RIGHT = 3;
+
 		//height and width in tiles
 		int32_t m_LevelWidth = 0;
 		int32_t m_LevelHeight = 0;

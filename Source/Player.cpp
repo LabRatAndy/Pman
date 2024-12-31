@@ -59,25 +59,27 @@ namespace Pman
 		{
 			float newXposition = m_PixelPosition.X + (m_Direction.X * (m_Specification.MoveSpeed * ts));
 			float newYposition = m_PixelPosition.Y + (m_Direction.Y * (m_Specification.MoveSpeed * ts));
-			//check if colliding with a wall, gem, etc. Before applying the movement also add check to see if has been caught by a ghost and then loose a life. Pacman cannot use the door so last parameter has to be false 
-			if (!m_Specification.LevelCallback->CollideWithWall({ static_cast<int32_t>(newXposition),static_cast<int32_t>(newYposition) }, m_Direction, false))
+			Vec2<int32_t> newpos = { 0,0 };
+			if (m_Direction.X == -1)
 			{
-				if (m_Direction.X == -1)
-				{
-					m_PixelPosition.X = static_cast<int32_t>(std::floor(newXposition));
-				}
-				else
-				{
-					m_PixelPosition.X = static_cast<int32_t>(std::ceil(newXposition));
-				}
-				if (m_Direction.Y == -1)
-				{
-					m_PixelPosition.Y = static_cast<int32_t>(std::floor(newYposition));;
-				}
-				else
-				{
-					m_PixelPosition.Y = static_cast<int32_t>(std::ceil(newYposition));
-				}
+				newpos.X = static_cast<int32_t>(std::floor(newXposition));
+			}
+			else
+			{
+				newpos.X = static_cast<int32_t>(std::ceil(newXposition));
+			}
+			if (m_Direction.Y == -1)
+			{
+				newpos.Y = static_cast<int32_t>(std::floor(newYposition));;
+			}
+			else
+			{
+				newpos.Y = static_cast<int32_t>(std::ceil(newYposition));
+			}
+			//check if colliding with a wall, gem, etc. Before applying the movement also add check to see if has been caught by a ghost and then loose a life. Pacman cannot use the door so last parameter has to be false 
+			if (!m_Specification.LevelCallback->CollideWithWall(newpos, m_Direction))
+			{
+				m_PixelPosition = newpos;
 			}
 		}
 		//update m_Position

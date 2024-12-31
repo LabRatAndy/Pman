@@ -6,9 +6,27 @@
 
 #include <raylib.h>
 
+
 namespace Pman
 {
-	
+	template<typename T>
+	struct Rect
+	{
+		T Left;
+		T Right;
+		T Top;
+		T Bottom;
+
+		Rect(T left, T right, T top, T bottom): Left(left),Right(right), Top(top), Bottom(bottom)
+		{
+		}
+	};
+
+	static bool CheckCollision(int32_t playerleft, int32_t playerright, int32_t playertop, int32_t playerbottom, int32_t tileleft, int32_t tileright, int32_t tiletop, int32_t tilebottom)
+	{
+		return !(playerright <= tileleft || playerleft >= tileright || playerbottom <= tiletop || playertop >= tilebottom);
+	}
+
 	Level::Level(const uint32_t tilesize) : m_TileSize(tilesize)
 	{
 
@@ -266,10 +284,10 @@ namespace Pman
 	void Level::OnUpdate(float ts)
 	{
 		m_Player->OnUpdate(ts);
-		m_CyanGhost->OnUpdate(ts);
-		m_RedGhost->OnUpdate(ts);
-		m_PinkGhost->OnUpdate(ts);
-		m_OrangeGhost->OnUpdate(ts);
+		//m_CyanGhost->OnUpdate(ts);
+		//m_RedGhost->OnUpdate(ts);
+		//m_PinkGhost->OnUpdate(ts);
+		//m_OrangeGhost->OnUpdate(ts);
 	}
 	void Level::OnRender()
 	{
@@ -298,93 +316,83 @@ namespace Pman
 	/// <param name="direction">The direction vector -1 is up/ left and 1 is right/down, 0 no movement in that axis</param>
 	/// <param name="canusedoor">is able to use the ghost house door</param>
 	/// <returns>true on collision with wall</returns>
-	bool Level::CollideWithWall(const Vec2<int32_t>& position, const Vec2<int32_t>& direction, bool canusedoor)
+	bool Level::CollideWithWall(const Vec2<int32_t>& position, const Vec2<int32_t>& direction)
 	{
-		//convert to tile space 
-		float tilex = static_cast<float>(position.X) / static_cast<float>(m_TileSize);
-		float tiley = static_cast<float>(position.Y) / static_cast<float>(m_TileSize);
-		int32_t lowx = static_cast<int32_t>(std::floor(tilex));
-		int32_t highx = static_cast<int32_t>(std::ceil(tilex));
-		int32_t lowy = static_cast<int32_t>(std::floor(tiley));
-		int32_t highy = static_cast<int32_t>(std::ceil(tiley));
-		std::array<uint32_t, 4> tileindices;
-		tileindices[0] = GetTileIndex({ lowx,lowy }, m_LevelWidth);			//Top left
-		tileindices[1] = GetTileIndex({ lowx, highy }, m_LevelWidth);		//bottom left
-		tileindices[2] = GetTileIndex({ highx,lowy }, m_LevelWidth);		//top right
-		tileindices[3] = GetTileIndex({ highx,highy }, m_LevelWidth);		//bottom right
+		TRACE("\nNew collsion check!");
+		// Get the player's bounding box in world space
+		int32_t playerLeft = position.X;
+		int32_t playerRight = position.X + m_TileSize;
+		int32_t playerTop = position.Y;
+		int32_t playerBottom = position.Y + m_TileSize;
 
-		if (m_Tiles[tileindices[0]].GetTileType() == TileType::Wall || m_Tiles[tileindices[0]].GetTileType() == TileType::Door)
+		// Calculate the tile coordinates the player is interacting with
+		int32_t tileXLeft = playerLeft / m_TileSize;
+		int32_t tileXRight = (playerRight - 1) / m_TileSize;
+		int32_t tileYTop = playerTop / m_TileSize;
+		int32_t tileYBottom = (playerBottom - 1) / m_TileSize;
+		bool retval = false;
+		// Iterate over the tiles the player's bounding box overlaps with
+		for (int32_t x = tileXLeft; x <= tileXRight; ++x)
 		{
-			if (direction.X == -1 || direction.Y == -1)
+			for (int32_t y = tileYTop; y <= tileYBottom; ++y)
 			{
-				return true;
+				// Get the tile boundaries in pixels
+				int32_t tileLeft = x * m_TileSize;
+				int32_t tileRight = (x + 1) * m_TileSize;
+				int32_t tileTop = y * m_TileSize;
+				int32_t tileBottom = (y + 1) * m_TileSize;
+
+				TRACE("Player Position: {}, {}", (int32_t)position.X, (int32_t)position.Y);
+				TRACE("Tile Bounds: Left {}, Right {}, Top {}, Bottom {}", (int32_t)tileLeft, (int32_t)tileRight, (int32_t)tileTop, (int32_t)tileBottom);
+
+				// Check if the player's bounding box intersects with the tile
+				if (CheckCollision(playerLeft, playerRight, playerTop, playerBottom, tileLeft, tileRight, tileTop, tileBottom))
+				{
+					TRACE("Collsion detectected with tile index: {} at coordinates: {},{}", (uint32_t)GetTileIndex({ x, y }, m_LevelWidth), (int32_t)x, (int32_t)y);
+					// If tile is a wall, prevent movement in that direction
+					if (m_Tiles[GetTileIndex({ x, y }, m_LevelWidth)].GetTileType() == TileType::Wall || m_Tiles[GetTileIndex({ x, y }, m_LevelWidth)].GetTileType() == TileType::Door)
+					{
+						TRACE("Tile collided with is a wall");
+						//check collision left	
+						if (playerLeft < tileRight)
+						{
+							if (direction.X == -1)
+							{
+								retval = true;
+							}
+						}
+						//check collision right
+						if (playerRight > tileLeft)
+						{
+							if (direction.X == 1)
+							{
+								retval = true;
+							}
+						}
+						//check collision above
+						if (playerTop < tileBottom)
+						{
+							if (direction.Y == -1)
+							{
+								retval = true;
+							}
+						}
+						//check collision below
+						if (playerBottom > tileTop)
+						{
+							if (direction.Y == 1)
+							{
+								retval = true;
+							}
+						}
+					}
+				}
 			}
 		}
-		else if (m_Tiles[tileindices[1]].GetTileType() == TileType::Wall || m_Tiles[tileindices[1]].GetTileType() == TileType::Door)
-		{
-			if (direction.X == -1 || direction.Y == 1)
-			{
-				return true;
-			}
-		}
-		else if(m_Tiles[tileindices[2]].GetTileType() == TileType::Wall || m_Tiles[tileindices[2]].GetTileType() == TileType::Door)
-		{
-			if (direction.X == 1 || direction.Y == -1)
-			{
-				return true;
-			}
-		}
-		else if(m_Tiles[tileindices[3]].GetTileType() == TileType::Wall || m_Tiles[tileindices[3]].GetTileType() == TileType::Door)
-		{
-			if (direction.X == 1 || direction.Y == 1)
-			{
-				return true;
-			}
-		}
-		return false;
+		return retval;
 	}
 #pragma warning(pop)
-	bool Level::CollideWithWall(const uint32_t& tilex, const uint32_t& tiley, const Vec2<int32_t>& direction, const bool& canusedoor)
-	{
-		size_t tileindex = static_cast<size_t>(-1);
-		if (direction.X == -1)
-		{
-			tileindex = GetTileArrayIndexofTile(tilex - 1, tiley, m_LevelWidth);
-		}
-		else if (direction.X == 1)
-		{
-			tileindex = GetTileArrayIndexofTile(tilex + 1, tiley, m_LevelWidth);
-		}
-		else if (direction.Y == -1)
-		{
-			tileindex = GetTileArrayIndexofTile(tilex, tiley - 1, m_LevelWidth);
-		}
-		else if (direction.Y == 1)
-		{
-			tileindex = GetTileArrayIndexofTile(tilex, tiley + 1, m_LevelWidth);
-		}
-		switch (m_Tiles[tileindex].GetTileType())
-		{
-		case TileType::Empty:
-		case TileType::Gem:
-		case TileType::PowerPellet:
-			return false;
-			break;
-		case TileType::Wall:
-			return true;
-			break;
-		case TileType::Door:
-			if (canusedoor)
-			{
-				return false;
-			}
-			else
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+	
 	bool Level::CollectGem(const Vec2<int32_t>& position)
 	{
 		size_t tileindex = GetTileArrayIndexofTile(position.X, position.Y, m_LevelWidth);
