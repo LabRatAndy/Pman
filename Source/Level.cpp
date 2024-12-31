@@ -323,10 +323,11 @@ namespace Pman
 		Rect<int32_t> playerrect = { position.X,position.X + m_TileSize,position.Y,position.Y + m_TileSize };
 		
 		// Calculate the tile coordinates the player is interacting with
-		int32_t tileXLeft = playerrect.Left / m_TileSize;
-		int32_t tileXRight = (playerrect.Right - 1) / m_TileSize;
-		int32_t tileYTop = playerrect.Top / m_TileSize;
-		int32_t tileYBottom = (playerrect.Bottom - 1) / m_TileSize;
+		//Reduce tile area that player interacts with by 4 pixels in each direction 2 on each side! This is to make it easier to get round the map. 
+		int32_t tileXLeft = (playerrect.Left + 2) / m_TileSize;
+		int32_t tileXRight = (playerrect.Right - 2) / m_TileSize;
+		int32_t tileYTop = (playerrect.Top + 2) / m_TileSize;
+		int32_t tileYBottom = (playerrect.Bottom - 2) / m_TileSize;
 		bool retval = false;
 		// Iterate over the tiles the player's bounding box overlaps with
 		for (int32_t x = tileXLeft; x <= tileXRight; ++x)
