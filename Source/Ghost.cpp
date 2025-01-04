@@ -75,7 +75,7 @@ namespace Pman
 			}
 			FindPath(m_Position);
 			const auto& tile = m_Specification.LevelCallback->GetTile(m_TileToMoveToIndex);
-			TRACE("Current position is: {},{}", (int32_t)m_Position.X, (int32_t)m_Position.Y);
+			TRACE("Current position is: {}", m_Position);
 			TRACE("Tile to move to is: {},{}", tile.GetTileXPosition(), tile.GetTileYPosition());
 			if (m_Position.X > tile.GetTileXPosition() && m_Direction.X != 1)
 			{
@@ -139,11 +139,11 @@ namespace Pman
 		}
 		{
 			//now move the ghost 
-			TRACE("Movespeed is: {} Timestep is: {}", (float)m_Specification.MoveSpeed, (float)ts);
-			TRACE("Initial Pixel Position: {},{}", (int32_t)m_PixelPosition.X, (int32_t)m_PixelPosition.Y);
+			TRACE("Movespeed is: {} Timestep is: {}", m_Specification.MoveSpeed, ts);
+			TRACE("Initial Pixel Position: {}", m_PixelPosition);
 			m_PixelPosition.X = m_PixelPosition.X + static_cast<int32_t>(m_Direction.X * (m_Specification.MoveSpeed * ts));
 			m_PixelPosition.Y = m_PixelPosition.Y + static_cast<int32_t>(m_Direction.Y * (m_Specification.MoveSpeed * ts));
-			TRACE("New pixel position: {},{}", (int32_t)m_PixelPosition.X, (int32_t)m_PixelPosition.Y);
+			TRACE("New pixel position: {}", m_PixelPosition);
 			//check for going though the tunnel from 1 size to the other
 			if (m_PixelPosition.X <= 0)
 			{
@@ -163,7 +163,7 @@ namespace Pman
 			}
 			else
 			{
-				TRACE("Not safe to mode switch. Pixel pos: {}, {}", (int32_t)m_PixelPosition.X, (int32_t)m_PixelPosition.Y);
+				TRACE("Not safe to mode switch. Pixel pos: {}", m_PixelPosition);
 				m_SafeToModeSwitchX = false;
 			}
 			if (m_PixelPosition.Y % m_Specification.TileSize == 0)
@@ -174,7 +174,7 @@ namespace Pman
 			}
 			else
 			{
-				TRACE("Not safe to mode switch. Pixel pos: {}, {}", (int32_t)m_PixelPosition.X, (int32_t)m_PixelPosition.Y);
+				TRACE("Not safe to mode switch. Pixel pos: {}", m_PixelPosition);
 				m_SafeToModeSwitchY = false;
 			}
 
@@ -272,7 +272,7 @@ namespace Pman
 			{
 				//The ghost has a specific corner of the map send it there
 				m_Target = m_Specification.ScatterPosition;
-				TRACE("Scatter mode target set to {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
+				TRACE("Scatter mode target set to {}", m_Target);
 				tooclose = false;
 				return;
 			}
@@ -283,7 +283,7 @@ namespace Pman
 				{
 				case GhostType::Red: // Targets pacman 
 					m_Target = m_Specification.LevelCallback->GetPacmanPosition();
-					TRACE("Red Ghost chase mode target set to be: {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
+					TRACE("Red Ghost chase mode target set to be: {}", m_Target);
 					return;
 					break;
 				case GhostType::Cyan: // yes I know the prototype is 2nd cell in fromt of the pacman then double the vector from red ghost but I can not get this to work reliably so am changing it to be the same as red ghost ie. target pacman
@@ -317,7 +317,7 @@ namespace Pman
 					//	ASSERT((m_Target.Y >= 0), "invalid target set");
 					//}
 					m_Target = m_Specification.LevelCallback->GetPacmanPosition();
-					TRACE("Cyan Ghost chase mode target set to be: {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
+					TRACE("Cyan Ghost chase mode target set to be: {}", m_Target);
 					return;
 					break;
 				}
@@ -345,7 +345,7 @@ namespace Pman
 							m_Target = m_Specification.ScatterPosition;
 						}
 					}
-					TRACE("Orange ghost chase mode target set to be {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
+					TRACE("Orange ghost chase mode target set to be {}", m_Target);
 					break;
 				}
 				case GhostType::Pink: //chase 4 tiles in front of pacman. Need to do clamping as could be possible to get value outside of the map!!
@@ -386,7 +386,7 @@ namespace Pman
 						}
 						adjustment--;
 					}
-					TRACE("Pink Ghost chase mode target set to be: {},{}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
+					TRACE("Pink Ghost chase mode target set to be: {}", m_Target);
 					return;
 					break;
 				}

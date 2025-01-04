@@ -9,18 +9,6 @@
 
 namespace Pman
 {
-	template<typename T>
-	struct Rect
-	{
-		T Left;
-		T Right;
-		T Top;
-		T Bottom;
-
-		Rect(T left, T right, T top, T bottom): Left(left),Right(right), Top(top), Bottom(bottom)
-		{
-		}
-	};
 
 	static bool CheckCollision(const Rect<int32_t>& player, const Rect<int32_t>& tile)
 	{
@@ -271,7 +259,7 @@ namespace Pman
 					break;
 				}
 				default:
-					ERROR("Invalid level data supplied at col: {}, row: {}", (uint32_t)column, (uint32_t)row);
+					ERROR("Invalid level data supplied at col: {}, row: {}", column, row);
 					break;
 				}
 				tilecount++;
@@ -284,10 +272,10 @@ namespace Pman
 	void Level::OnUpdate(float ts)
 	{
 		m_Player->OnUpdate(ts);
-		//m_CyanGhost->OnUpdate(ts);
-		//m_RedGhost->OnUpdate(ts);
-		//m_PinkGhost->OnUpdate(ts);
-		//m_OrangeGhost->OnUpdate(ts);
+		m_CyanGhost->OnUpdate(ts);
+		m_RedGhost->OnUpdate(ts);
+		m_PinkGhost->OnUpdate(ts);
+		m_OrangeGhost->OnUpdate(ts);
 	}
 	void Level::OnRender()
 	{
@@ -336,14 +324,13 @@ namespace Pman
 			{
 				// Get the tile boundaries in pixels
 				Rect tilerect = { x * m_TileSize,(x + 1) * m_TileSize,y * m_TileSize,(y + 1) * m_TileSize };
-				
-				TRACE("Player Position: {}, {}", (int32_t)position.X, (int32_t)position.Y);
-				TRACE("Tile Bounds: Left {}, Right {}, Top {}, Bottom {}", (int32_t)tilerect.Left, (int32_t)tilerect.Right, (int32_t)tilerect.Top, (int32_t)tilerect.Bottom);
+				TRACE("Player Position {}", position);
+				TRACE("Tile Bounds: {}", tilerect);
 
 				// Check if the player's bounding box intersects with the tile
 				if (CheckCollision(playerrect, tilerect))
 				{
-					TRACE("Collsion detectected with tile index: {} at coordinates: {},{}", (uint32_t)GetTileIndex({ x, y }, m_LevelWidth), (int32_t)x, (int32_t)y);
+					TRACE("Collsion detectected with tile index: {} at coordinates: {},{}", GetTileIndex({ x, y }, m_LevelWidth), x, y);
 					// If tile is a wall, prevent movement in that direction
 					if (m_Tiles[GetTileIndex({ x, y }, m_LevelWidth)].GetTileType() == TileType::Wall || m_Tiles[GetTileIndex({ x, y }, m_LevelWidth)].GetTileType() == TileType::Door)
 					{
