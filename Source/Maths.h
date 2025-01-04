@@ -1,6 +1,9 @@
 #pragma once
 #include "Assert.h"
 #include <cmath>
+#include <format>
+
+
 
 namespace Pman
 {
@@ -89,6 +92,7 @@ namespace Pman
 		}
 	};
 
+
 	template<typename T>
 	struct Vec3
 	{
@@ -153,4 +157,66 @@ namespace Pman
 			return !(*this == other);
 		}
 	};
+
+	template<typename T>
+	struct Rect
+	{
+		T Left;
+		T Right;
+		T Top;
+		T Bottom;
+
+		Rect(T left, T right, T top, T bottom) : Left(left), Right(right), Top(top), Bottom(bottom)
+		{
+		}
+	};
 }
+template<>
+struct std::formatter<Pman::Vec2<int32_t>>
+{
+	constexpr auto parse(std::format_parse_context& ctx)
+	{
+		return std::begin(ctx);
+	}
+	auto format(const Pman::Vec2<int32_t>& obj, std::format_context& ctx) const
+	{
+		return std::format_to(ctx.out(), "{},{}", obj.X, obj.Y);
+	}
+};
+template<>
+struct std::formatter<Pman::Vec2<uint32_t>>
+{
+	constexpr auto parse(std::format_parse_context& ctx)
+	{
+		return std::begin(ctx);
+	}
+	auto format(const Pman::Vec2<uint32_t>& obj, std::format_context& ctx) const
+	{
+		return std::format_to(ctx.out(), "{},{}", obj.X, obj.Y);
+	}
+};
+template<>
+struct std::formatter<Pman::Vec2<float>>
+{
+	constexpr auto parse(std::format_parse_context& ctx)
+	{
+		return std::begin(ctx);
+	}
+	auto format(const Pman::Vec2<float>& obj, std::format_context& ctx) const
+	{
+		return std::format_to(ctx.out(), "{},{}", obj.X, obj.Y);
+	}
+};
+template<>
+struct std::formatter<Pman::Rect<int32_t>>
+{
+	constexpr auto parse(std::format_parse_context& ctx)
+	{
+		return std::begin(ctx);
+	}
+	auto format(const Pman::Rect<int32_t> obj, std::format_context& ctx) const
+	{
+		return std::format_to(ctx.out(), "Left: {}, Right: {}, Top: {}, Bottom: {}", obj.Left, obj.Right, obj.Top, obj.Bottom);
+	}
+
+};
