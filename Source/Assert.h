@@ -28,23 +28,23 @@ namespace Pman
 	template<ErrorLevel L, typename ... Args>
 	struct Log<L ,const char*, Args ...>
 	{
-		Log(const char* msg, Args &&... args, std::source_location loc = std::source_location::current())
+		Log(const char* msg, Args ... args, std::source_location loc = std::source_location::current())
 		{
 			if constexpr (L == ErrorLevel::TRACE)
 			{
-				std::println("[TRACE] {}:{} {}", loc.file_name(), loc.line(), std::vformat(msg, std::make_format_args(args...)));
+				std::println("[TRACE] {}:{} {}", loc.file_name(), loc.line(), std::vformat(msg, std::make_format_args(args ...)));
 			}
 			else if constexpr (L == ErrorLevel::INFO)
 			{
-				std::println("[INFO] {}:{} {}", loc.file_name(), loc.line(), std::vformat(msg, std::make_format_args(args...)));
+				std::println("[INFO] {}:{} {}", loc.file_name(), loc.line(), std::vformat(msg, std::make_format_args(args ...)));
 			}
 			else if constexpr (L == ErrorLevel::WARN)
 			{
-				std::println("[WARNING] {}:{} {}", loc.file_name(), loc.line(), std::vformat(msg, std::make_format_args(args...)));
+				std::println("[WARNING] {}:{} {}", loc.file_name(), loc.line(), std::vformat(msg, std::make_format_args(args ...)));
 			}
 			else if constexpr (L == ErrorLevel::ERROR)
 			{
-				std::println("[ERROR] {}:{} {}", loc.file_name(), loc.line(), std::vformat(msg, std::make_format_args(args...)));
+				std::println("[ERROR] {}:{} {}", loc.file_name(), loc.line(), std::vformat(msg, std::make_format_args(args ...)));
 			}
 		}
 	};
