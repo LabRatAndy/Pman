@@ -13,7 +13,7 @@ namespace Pman
 	
 	Player::Player(const PlayerSpecification& spec) : m_Specification(spec), m_Lives(spec.PlayerLives), m_Position(spec.InitialPosition), m_Status(PlayerStatus::NotStarted), m_PixelPosition({ static_cast<int32_t>(spec.InitialPosition.X * spec.TileSize),static_cast<int32_t>(spec.InitialPosition.Y * spec.TileSize) })
 	{
-
+		SetTileCoordsFromOriginAndPixelPosition(m_Position, m_PixelPosition, m_Specification.TileSize);
 	}
 	Player::~Player()
 	{
@@ -83,8 +83,7 @@ namespace Pman
 			}
 		}
 		//update m_Position
-		m_Position.X = static_cast<int32_t>(std::floor(m_PixelPosition.X / m_Specification.TileSize));
-		m_Position.Y = static_cast<int32_t>(std::floor(m_PixelPosition.Y / m_Specification.TileSize));
+		SetTileCoordsFromOriginAndPixelPosition(m_Position, m_PixelPosition, m_Specification.TileSize);
 	}
 	void Player::Reset()
 	{
