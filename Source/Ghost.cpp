@@ -57,12 +57,16 @@ namespace Pman
 			return;
 		if (m_Status == GhostStatus::IsBlue)
 		{
+			TRACE("Running is blue code!");
+			TRACE("Pixel pos is {}", m_PixelPosition);
 			if (m_FrightenedTimer <= 0.0f)
 			{
 				// ghost back to normal
 				m_Status = GhostStatus::Running;
+				TRACE("Ghost back to normal");
 			}
 			m_FrightenedTimer -= ts;
+			TRACE("Frightened timer is now {}", m_FrightenedTimer);
 		}
 		UpdateTarget();
 		ASSERT((m_Target.X <= m_Specification.LevelCallback->GetLevelWidthInTiles()), "Error invalid target width");
@@ -216,10 +220,10 @@ namespace Pman
 			Application::Get().GetRenderer().RenderSprite(m_Specification.MainSprite, m_PixelPosition.X, m_PixelPosition.Y, m_Specification.TileSize);
 			break;
 		case GhostStatus::IsBlue:
-			Application::Get().GetRenderer().RenderSprite(m_Specification.BlueSprite, m_PixelPosition.X, m_PixelPosition.X, m_Specification.TileSize);
+			Application::Get().GetRenderer().RenderSprite(m_Specification.BlueSprite, m_PixelPosition.X, m_PixelPosition.Y, m_Specification.TileSize);
 			break;
 		case GhostStatus::EyesOnly:
-			Application::Get().GetRenderer().RenderSprite(m_Specification.EyesSprite, m_PixelPosition.X, m_PixelPosition.X, m_Specification.TileSize);
+			Application::Get().GetRenderer().RenderSprite(m_Specification.EyesSprite, m_PixelPosition.X, m_PixelPosition.Y, m_Specification.TileSize);
 			break;
 		}
 	}
@@ -234,9 +238,11 @@ namespace Pman
 
 	void Ghost::SetPowerPelletActivated()
 	{
+		TRACE("Power pellet collected ghost is blue");
 		m_Status = GhostStatus::IsBlue;
 		m_Mode = GhostMode::Scatter;
-		m_FrightenedTimer = 10.0f; // ts is in seconds 1 minute 
+		m_FrightenedTimer = 10.0f;
+		TRACE("Frightened timer set to {}", m_FrightenedTimer);
 	}
 	void Ghost::SetEaten()
 	{
