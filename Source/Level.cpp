@@ -14,7 +14,13 @@ namespace Pman
 	{
 		return !(player.Right <= tile.Left || player.Left >= tile.Right || player.Bottom <= tile.Top || player.Top >= tile.Bottom);
 	}
-
+	static void GetGhostRectangle(Rect<int32_t>& rect, const Vec2<int32_t>& ghostposition, const int32_t tilesize)
+	{
+		rect.Left = ghostposition.X;
+		rect.Right = ghostposition.X + tilesize;
+		rect.Top = ghostposition.Y;
+		rect.Bottom = ghostposition.Y + tilesize;
+	}
 	Level::Level(const uint32_t tilesize) : m_TileSize(tilesize)
 	{
 
@@ -81,8 +87,7 @@ namespace Pman
 			{
 				ASSERT((tilecount < rows * columns), "Error !!!! Too many tiles have been processed!");
 				auto it = m_Tiles.begin() + tilecount;
-				size_t doorx = 0;
-				size_t doory = 0;
+							
 				switch (leveldata[row][column])
 				{
 				case '#': //wall
@@ -103,8 +108,6 @@ namespace Pman
 					spec.XPosition = static_cast<int32_t>(column);
 					spec.YPosition = static_cast<int32_t>(row);
 					m_Tiles.emplace(it, spec);
-					doorx = column;
-					doory = row;
 					break;
 				}
 				case '.': //gem
@@ -140,7 +143,6 @@ namespace Pman
 					gspec.MoveSpeed = 61.0f;
 					gspec.ScatterPosition = { 18,1 }; 
 					gspec.TileSize = m_TileSize;
-					gspec.DoorPosition = { static_cast<int32_t>(doorx),static_cast<int32_t>(doory) };
 					gspec.Type = GhostType::Red;
 					m_RedGhost = new Ghost(gspec);
 					TileSpecification spec{};
@@ -163,7 +165,6 @@ namespace Pman
 					gspec.ScatterPosition = { 2,1 };
 					gspec.TileSize = m_TileSize;
 					gspec.Type = GhostType::Pink;
-					gspec.DoorPosition = { static_cast<int32_t>(doorx),static_cast<int32_t>(doory) };
 					m_PinkGhost = new Ghost(gspec);
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
@@ -185,7 +186,6 @@ namespace Pman
 					gspec.ScatterPosition = { 18,19 };
 					gspec.TileSize = m_TileSize;
 					gspec.Type = GhostType::Cyan;
-					gspec.DoorPosition = { static_cast<int32_t>(doorx),static_cast<int32_t>(doory) };
 					m_CyanGhost = new Ghost(gspec);
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
@@ -207,7 +207,6 @@ namespace Pman
 					gspec.ScatterPosition = { 2,19 };
 					gspec.TileSize = m_TileSize;
 					gspec.Type = GhostType::Orange;
-					gspec.DoorPosition = { static_cast<int32_t>(doorx),static_cast<int32_t>(doory) };
 					m_OrangeGhost = new Ghost(gspec);
 					TileSpecification spec{};
 					spec.TileSize = m_TileSize;
@@ -222,7 +221,7 @@ namespace Pman
 					ASSERT(!m_Player, "Already have a player!");
 					PlayerSpecification pspec{};
 					pspec.InitialPosition = { static_cast<int32_t>(column),static_cast<int32_t>(row) };
-					pspec.MoveSpeed = 10.0f;
+					pspec.MoveSpeed = 20.0f;
 					pspec.PlayerLives = 3;
 					pspec.PlayerSprite = m_PlayerSprite;
 					pspec.TileSize = m_TileSize;
@@ -304,7 +303,7 @@ namespace Pman
 	/// <param name="direction">The direction vector -1 is up/ left and 1 is right/down, 0 no movement in that axis</param>
 	/// <param name="canusedoor">is able to use the ghost house door</param>
 	/// <returns>true on collision with wall</returns>
-	bool Level::CollideWithWall(const Vec2<int32_t>& position, const Vec2<int32_t>& direction)
+	bool Level::CollideWithWall(const Vec2<int32_t>& position, const Vec2<int32_t>& direction) const
 	{
 		TRACE("\nNew collsion check!");
 		// Get the player's bounding box in world space
@@ -575,5 +574,72 @@ namespace Pman
 		}
 
 
+	}
+	void Level::CollideWithGhost(const Vec2<int32_t>& position) const
+	{
+		//calculate player and Ghost rectangles
+		Rect<int32_t> playerrect = { position.X, position.X + m_TileSize,position.Y,position.Y + m_TileSize };
+		Rect<int32_t> redghostrect = { 0,0,0,0 };
+		Rect<int32_t> cyanghostrect = { 0,0,0,0 };
+		Rect<int32_t> pinkghostrect = { 0,0,0,0 };
+		Rect<int32_t> orangeghostrect = { 0,0,0,0 };
+		GetGhostRectangle(redghostrect, m_RedGhost->GetPixelPosition(), m_TileSize);
+		GetGhostRectangle(cyanghostrect, m_CyanGhost->GetPixelPosition(), m_TileSize);
+		GetGhostRectangle(pinkghostrect, m_PinkGhost->GetPixelPosition(), m_TileSize);
+		GetGhostRectangle(orangeghostrect, m_OrangeGhost->GetPixelPosition(), m_TileSize);
+		if (CheckCollision(playerrect, redghostrect) && m_RedGhost->GetStatus() != GhostStatus::EyesOnly)
+		{
+			
+			if (m_RedGhost->GetStatus() == GhostStatus::IsBlue) 
+			{
+				INFO("Collided with Red ghost at {} and Powerpellet was active", position);
+				m_RedGhost->SetEaten();
+			}
+			else
+			{
+				INFO("Collided with Red ghost at {} and lost a life", position);
+				m_Player->LooseALife();
+			}
+		}
+		INFO("Player rect: {}. Cyan Ghost Rect: {}", playerrect, cyanghostrect);
+		if (CheckCollision(playerrect, cyanghostrect) && m_CyanGhost->GetStatus() != GhostStatus::EyesOnly)
+		{
+			if (m_CyanGhost->GetStatus() == GhostStatus::IsBlue)
+			{
+				INFO("Collided with Cyan ghost at {} and Powerpellet was active", position);
+				m_CyanGhost->SetEaten();
+			}
+			else
+			{
+				INFO("Collided with Cyan ghost at {} and lost a life", position);
+				m_Player->LooseALife();
+			}
+		}
+		if (CheckCollision(playerrect, pinkghostrect) && m_PinkGhost->GetStatus() != GhostStatus::EyesOnly)
+		{
+			if (m_PinkGhost->GetStatus() == GhostStatus::IsBlue)
+			{
+				INFO("Collided with Pink ghost at {} and Powerpellet was active", position);
+				m_PinkGhost->SetEaten();
+			}
+			else
+			{
+				INFO("Collided with Pink ghost at {} and lost a life", position);
+				m_Player->LooseALife();
+			}
+		}
+		if (CheckCollision(playerrect, orangeghostrect) && m_OrangeGhost->GetStatus() != GhostStatus::EyesOnly)
+		{
+			if (m_OrangeGhost->GetStatus() == GhostStatus::IsBlue)
+			{
+				INFO("Collided with Orange ghost at {} and Powerpellet was active", position);
+				m_OrangeGhost->SetEaten();
+			}
+			else
+			{
+				INFO("Collided with Orange ghost at {} and lost a life", position);
+				m_Player->LooseALife();
+			}
+		}
 	}
 }

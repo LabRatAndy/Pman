@@ -241,7 +241,7 @@ namespace Pman
 		TRACE("Power pellet collected ghost is blue");
 		m_Status = GhostStatus::IsBlue;
 		m_Mode = GhostMode::Scatter;
-		m_FrightenedTimer = 10.0f;
+		m_FrightenedTimer = 15.0f;
 		TRACE("Frightened timer set to {}", m_FrightenedTimer);
 	}
 	void Ghost::SetEaten()
@@ -254,152 +254,143 @@ namespace Pman
 	void Ghost::UpdateTarget()
 	{
 		static bool tooclose = false;
-		if (m_CanUseDoor)
+		//scatter mode 
+		if (m_Mode == GhostMode::Scatter)
 		{
-			if (m_Position == m_Target)
-			{
-				if (m_Specification.DoorPosition == m_Target) //ghost is at the door 
-				{
-					m_CanUseDoor = false;
-				}
-				else if (m_Specification.InitialPosition == m_Target) //ghost is back at its starting position
-				{
-					m_Status = GhostStatus::Running;
-					m_Mode = GhostMode::Scatter;
-					m_Target = m_Specification.DoorPosition;
-					return;
-				}
-			}
+			//The ghost has a specific corner of the map send it there
+			m_Target = m_Specification.ScatterPosition;
+			TRACE("Scatter mode target set to {}", m_Target);
+			tooclose = false;
+			return;
 		}
-		else
+		else if (m_Mode == GhostMode::Chase)
 		{
-			//scatter mode 
-			if (m_Mode == GhostMode::Scatter)
+			//chase mode is different for each ghost type!
+			switch (m_Specification.Type)
 			{
-				//The ghost has a specific corner of the map send it there
-				m_Target = m_Specification.ScatterPosition;
-				TRACE("Scatter mode target set to {}", m_Target);
-				tooclose = false;
+			case GhostType::Red: // Targets pacman 
+				m_Target = m_Specification.LevelCallback->GetPacmanPosition();
+				TRACE("Red Ghost chase mode target set to be: {}", m_Target);
 				return;
-			}
-			else if (m_Mode == GhostMode::Chase)
+				break;
+			case GhostType::Cyan: // yes I know the prototype is 2nd cell in fromt of the pacman then double the vector from red ghost but I can not get this to work reliably so am changing it to be the same as red ghost ie. target pacman
 			{
-				//chase mode is different for each ghost type!
-				switch (m_Specification.Type)
+				////need to check that selected tile is not a wall and actually reachable 
+				//auto pmanpos = m_Specification.LevelCallback->GetPacmanPosition();
+				//auto pmandirection = m_Specification.LevelCallback->GetPacmanDirection();
+				//auto redghostpos = m_Specification.LevelCallback->GetRedGhostPosition();
+				////check that pacman is moving 
+				//if (pmandirection.X == 0 && pmandirection.Y == 0)
+				//{
+				//	pmanpos.X += 2;
+				//}
+				//else
+				//{
+				//	pmanpos.X += pmandirection.X * 2;
+				//	pmanpos.Y += pmandirection.Y * 2;
+				//}
+				//Vec2<int32_t> direction{ (redghostpos.X - pmanpos.X),-(redghostpos.Y - pmanpos.Y) }; //Y needs to be inverted due to origin being in the top left not bottom left.
+				//direction * 2;
+				//TRACE("answer values are: {}, {}", (int32_t)direction.X, (int32_t)direction.Y);
+				//m_Target.X = redghostpos.X + direction.X;
+				//m_Target.Y = redghostpos.Y + direction.Y;
+				//TRACE("Position of double the length of vector from RED to 2 spaces in front of pacman: {}, {}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
+				////check if it is valid to move to the target tile 
+				//while (!TileIsAbleToMoveTo(m_Target))
+				//{
+				//	TRACE("In Cyan ghost reduction loop");
+				//	ReduceTargetVector(m_Target, direction);
+				//	ASSERT((m_Target.X >= 0), "invalid target set");
+				//	ASSERT((m_Target.Y >= 0), "invalid target set");
+				//}
+				m_Target = m_Specification.LevelCallback->GetPacmanPosition();
+				TRACE("Cyan Ghost chase mode target set to be: {}", m_Target);
+				return;
+				break;
+			}
+			case GhostType::Orange: // chase pacman until it gets close(3 tiles) then goes to scatter mode
+			{
+				auto pacmanposition = m_Specification.LevelCallback->GetPacmanPosition();
+				Vec2<int32_t> diff = pacmanposition - m_Position;
+				float difflength = diff.Length();
+				if (difflength <= 3.0f)
 				{
-				case GhostType::Red: // Targets pacman 
-					m_Target = m_Specification.LevelCallback->GetPacmanPosition();
-					TRACE("Red Ghost chase mode target set to be: {}", m_Target);
-					return;
-					break;
-				case GhostType::Cyan: // yes I know the prototype is 2nd cell in fromt of the pacman then double the vector from red ghost but I can not get this to work reliably so am changing it to be the same as red ghost ie. target pacman
-				{
-					////need to check that selected tile is not a wall and actually reachable 
-					//auto pmanpos = m_Specification.LevelCallback->GetPacmanPosition();
-					//auto pmandirection = m_Specification.LevelCallback->GetPacmanDirection();
-					//auto redghostpos = m_Specification.LevelCallback->GetRedGhostPosition();
-					////check that pacman is moving 
-					//if (pmandirection.X == 0 && pmandirection.Y == 0)
-					//{
-					//	pmanpos.X += 2;
-					//}
-					//else
-					//{
-					//	pmanpos.X += pmandirection.X * 2;
-					//	pmanpos.Y += pmandirection.Y * 2;
-					//}
-					//Vec2<int32_t> direction{ (redghostpos.X - pmanpos.X),-(redghostpos.Y - pmanpos.Y) }; //Y needs to be inverted due to origin being in the top left not bottom left.
-					//direction * 2;
-					//TRACE("answer values are: {}, {}", (int32_t)direction.X, (int32_t)direction.Y);
-					//m_Target.X = redghostpos.X + direction.X;
-					//m_Target.Y = redghostpos.Y + direction.Y;
-					//TRACE("Position of double the length of vector from RED to 2 spaces in front of pacman: {}, {}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
-					////check if it is valid to move to the target tile 
-					//while (!TileIsAbleToMoveTo(m_Target))
-					//{
-					//	TRACE("In Cyan ghost reduction loop");
-					//	ReduceTargetVector(m_Target, direction);
-					//	ASSERT((m_Target.X >= 0), "invalid target set");
-					//	ASSERT((m_Target.Y >= 0), "invalid target set");
-					//}
-					m_Target = m_Specification.LevelCallback->GetPacmanPosition();
-					TRACE("Cyan Ghost chase mode target set to be: {}", m_Target);
-					return;
-					break;
+					tooclose = true;
 				}
-				case GhostType::Orange: // chase pacman until it gets close(3 tiles) then goes to scatter mode
+				else if(m_Position == m_Specification.ScatterPosition)
 				{
-					auto pacmanposition = m_Specification.LevelCallback->GetPacmanPosition();
-					Vec2<int32_t> diff = pacmanposition - m_Position;
-					float difflength = diff.Length();
-					if (difflength <= 3.0f)
-					{
-						tooclose = true;
-					}
-					else if(m_Position == m_Specification.ScatterPosition)
-					{
-						tooclose = false;
-					}
-					if (m_SafeToModeSwitchX && m_SafeToModeSwitchY)
-					{
-						if (!tooclose)
-						{
-							m_Target = pacmanposition;
-						}
-						else
-						{
-							m_Target = m_Specification.ScatterPosition;
-						}
-					}
-					TRACE("Orange ghost chase mode target set to be {}", m_Target);
-					break;
+					tooclose = false;
 				}
-				case GhostType::Pink: //chase 4 tiles in front of pacman. Need to do clamping as could be possible to get value outside of the map!!
+				if (m_SafeToModeSwitchX && m_SafeToModeSwitchY)
 				{
-					auto pmanpos = m_Specification.LevelCallback->GetPacmanPosition();
-					auto direction = m_Specification.LevelCallback->GetPacmanDirection();
-					if (direction.X != 0)
+					if (!tooclose)
 					{
-						m_Target.X = pmanpos.X + (direction.X * 4);
-						m_Target.Y = pmanpos.Y;
-					}
-					else if (direction.Y != 0)
-					{
-						m_Target.Y = pmanpos.Y + (direction.Y * 4);
-						m_Target.X = pmanpos.X;
+						m_Target = pacmanposition;
 					}
 					else
 					{
-						// pacpman isn't moving
-						m_Target.X = pmanpos.X + 4;
-						m_Target.Y = pmanpos.Y;
+						m_Target = m_Specification.ScatterPosition;
 					}
-					//check that the tile is vaild if not reduce number of tile in front so that it is valid
-					int32_t adjustment = 3;
-					while (!TileIsAbleToMoveTo(m_Target))
+				}
+				TRACE("Orange ghost chase mode target set to be {}", m_Target);
+				break;
+			}
+			case GhostType::Pink: //chase 4 tiles in front of pacman. Need to do clamping as could be possible to get value outside of the map!!
+			{
+				auto pmanpos = m_Specification.LevelCallback->GetPacmanPosition();
+				auto direction = m_Specification.LevelCallback->GetPacmanDirection();
+				if (direction.X != 0)
+				{
+					m_Target.X = pmanpos.X + (direction.X * 4);
+					m_Target.Y = pmanpos.Y;
+				}
+				else if (direction.Y != 0)
+				{
+					m_Target.Y = pmanpos.Y + (direction.Y * 4);
+					m_Target.X = pmanpos.X;
+				}
+				else
+				{
+					// pacpman isn't moving
+					m_Target.X = pmanpos.X + 4;
+					m_Target.Y = pmanpos.Y;
+				}
+				//check that the tile is vaild if not reduce number of tile in front so that it is valid
+				int32_t adjustment = 3;
+				while (!TileIsAbleToMoveTo(m_Target))
+				{
+					if (direction.X != 0)
 					{
-						if (direction.X != 0)
-						{
-							m_Target.X = pmanpos.X + (direction.X * adjustment);
-						}
-						else if (direction.Y != 0)
-						{
-							m_Target.Y = pmanpos.Y + (direction.Y * adjustment);
-						}
-						else
-						{
-							m_Target.X = pmanpos.X + adjustment;
-						}
-						adjustment--;
+						m_Target.X = pmanpos.X + (direction.X * adjustment);
 					}
-					TRACE("Pink Ghost chase mode target set to be: {}", m_Target);
-					return;
-					break;
+					else if (direction.Y != 0)
+					{
+						m_Target.Y = pmanpos.Y + (direction.Y * adjustment);
+					}
+					else
+					{
+						m_Target.X = pmanpos.X + adjustment;
+					}
+					adjustment--;
 				}
-				}
+				TRACE("Pink Ghost chase mode target set to be: {}", m_Target);
+				return;
+				break;
+			}
+			}
+			
+		}
+		else if (m_Mode == GhostMode::Eaten)
+		{
+			if (m_Specification.InitialPosition == m_Position)
+			{
+				m_Status = GhostStatus::Running;
+				m_Mode = GhostMode::Scatter;
+				m_Target = m_Specification.ScatterPosition;
 			}
 		}
 	}
+
 
 	void Ghost::FindPath(const Vec2<int32_t>& starttile)
 	{

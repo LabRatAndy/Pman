@@ -40,7 +40,7 @@ namespace Pman
 		GhostType Type = GhostType::Invalid;
 		Vec2<int32_t> InitialPosition = { -1,-1 };
 		Vec2<int32_t> ScatterPosition = { -1,-1 };
-		Vec2<int32_t> DoorPosition = { -1,-1 };
+		//Vec2<int32_t> DoorPosition = { -1,-1 };
 		uint32_t TileSize = 32;
 		float MoveSpeed = 1.0f;
 		Level* LevelCallback = nullptr;
@@ -60,7 +60,8 @@ namespace Pman
 
 		GhostStatus GetStatus() const { return m_Status; }
 		GhostMode GetMode() const { return m_Mode; }
-		Vec2<int32_t> GetPosition() const { return m_Position; }
+		const Vec2<int32_t>& GetPosition() const { return m_Position; }
+		const Vec2<int32_t>& GetPixelPosition() const { return m_PixelPosition; }
 		float GetMoveSpeed() const { return m_Specification.MoveSpeed; }
 
 		void SetPowerPelletActivated();
@@ -77,7 +78,7 @@ namespace Pman
 		float m_FrightenedTimer = 0.0f;
 		float m_ModeTimer = 0.0f;
 		uint32_t m_AttackWave = 0;
-		bool m_CanUseDoor = false;
+		//bool m_CanUseDoor = false;
 		int32_t m_TileToMoveToIndex = -1;
 		bool m_ModeTimerUp = false;
 		bool m_SafeToModeSwitchX = false;

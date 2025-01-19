@@ -22,9 +22,26 @@ namespace Pman
 	void Player::OnRender()
 	{
 		Application::Get().GetRenderer().RenderSprite(m_Specification.PlayerSprite, m_PixelPosition.X, m_PixelPosition.Y, m_Specification.TileSize);
+		Application::Get().GetRenderer().RenderScore(m_Score);
+		Application::Get().GetRenderer().RenderPlayerLives(m_Lives);
 	}
 	void Player::OnUpdate(float ts)
 	{
+		//check if we still have some lives left if not return
+		if (m_Lives == 0)
+		{
+			return;
+		}
+		//check if collecting a gem, power pellet or hit a ghost
+		if (m_Specification.LevelCallback->CollectGem(m_Position))
+		{
+			m_Score = m_Score + 10;
+		}
+		if (m_Specification.LevelCallback->CollectPowerPellet(m_Position))
+		{
+			m_Score = m_Score + 50;
+		}
+		m_Specification.LevelCallback->CollideWithGhost(m_PixelPosition);
 		//player movement
 		if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP) /* && m_Status == PlayerStatus::Running*/)
 		{
@@ -46,14 +63,6 @@ namespace Pman
 		{
 			m_Direction.X = 0;
 			m_Direction.Y = 0;
-		}
-		if (m_Specification.LevelCallback->CollectGem(m_Position))
-		{
-			m_Score = m_Score + 10;
-		}
-		if (m_Specification.LevelCallback->CollectPowerPellet(m_Position))
-		{
-			m_Score = m_Score + 50;
 		}
 		if (m_Direction.X != 0 || m_Direction.Y != 0)
 		{

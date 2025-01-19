@@ -57,7 +57,8 @@ namespace Pman
 		int32_t GetAbsoluteHeight() const { return m_LevelHeight * m_TileSize; }
 
 		// these will likely need to be reviewed
-		bool CollideWithWall(const Vec2<int32_t>& position, const Vec2<int32_t>& direction);
+		bool CollideWithWall(const Vec2<int32_t>& position, const Vec2<int32_t>& direction) const;
+		void CollideWithGhost(const Vec2<int32_t>& position) const;
 		bool CollectGem(const Vec2<int32_t>& position);
 		bool CollectPowerPellet(const Vec2<int32_t>& position);
 		//bool CollideWithWall(const uint32_t& tilex, const uint32_t& tiley, const Vec2<int32_t>& direction, const bool& canusedoor);
