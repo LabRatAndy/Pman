@@ -32,6 +32,14 @@ namespace Pman
 		{
 			return;
 		}
+		if (m_Status == PlayerStatus::Dead)
+		{
+			if (m_LostLifeTimer <= 0.0f)
+			{
+				m_Status = PlayerStatus::Running;
+			}
+			m_LostLifeTimer = m_LostLifeTimer - ts;
+		}
 		//check if collecting a gem, power pellet or hit a ghost
 		if (m_Specification.LevelCallback->CollectGem(m_Position))
 		{
@@ -101,5 +109,14 @@ namespace Pman
 	void Player::StartGame()
 	{
 		m_Status = PlayerStatus::Running;
+	}
+	void Player::LooseALife()
+	{
+		if (m_Status == PlayerStatus::Running)
+		{
+			m_Lives--;
+			m_Status = PlayerStatus::Dead;
+			m_LostLifeTimer = 5.0f; //5 seconds to get clear when you loose a live 
+		}
 	}
 }

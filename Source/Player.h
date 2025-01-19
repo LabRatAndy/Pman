@@ -47,7 +47,7 @@ namespace Pman
 		void Reset();
 
 		void StartGame();
-		void LooseALife() { m_Lives--; }
+		void LooseALife();
 
 		Vec2<int32_t> GetPosition() const { return m_Position; }
 		uint32_t GetScore() const { return m_Score; }
@@ -63,5 +63,6 @@ namespace Pman
 		PlayerStatus m_Status = PlayerStatus::None;
 		PlayerSpecification m_Specification = PlayerSpecification();
 		uint32_t m_Lives = 3;
+		float m_LostLifeTimer = 0.0f;
 	};
 }
