@@ -14,7 +14,7 @@ namespace Pman
 	class Renderer
 	{
 	public:
-		Renderer(uint32_t width, uint32_t height);
+		Renderer(uint32_t width, uint32_t height,uint32_t textstartheight);
 		~Renderer();
 
 		void Initialise(uint32_t FPS);
@@ -29,10 +29,13 @@ namespace Pman
 		void RenderRectangle(uint32_t xpos, uint32_t ypos, uint32_t tilesize, Vec4<uint8_t> colour);
 		void RenderTest();
 		void RenderGridLines(uint32_t tilesize);
+		void RenderScore(const uint32_t score);
+		void RenderPlayerLives(const uint32_t playerlives);
 
 	private:
 		uint32_t m_Width = 0;
 		uint32_t m_Height = 0;
+		uint32_t m_TextStartHeight = 0;
 
 		SpriteList* m_Sprites = nullptr;
 		uint32_t m_SpriteCount = 0;

@@ -8,6 +8,7 @@ namespace Pman
 		uint32_t TileSize = 32;
 		uint32_t TilesWide = 21;
 		uint32_t TilesHigh = 21;
+		uint32_t TextTilesHigh = 1; // number of extra tiles at the bottom for the score
 		std::string WindowTitle = "Pacman";
 	};
 	//fwd decs

@@ -4,10 +4,12 @@
 #include "Assert.h"
 #include <raylib.h>
 #include <iostream>
+#include <string>
+#include <format>
 
 namespace Pman
 {
-	Renderer::Renderer(uint32_t width, uint32_t height) : m_Width(width), m_Height(height)
+	Renderer::Renderer(uint32_t width, uint32_t height, uint32_t textstartheight) : m_Width(width), m_Height(height), m_TextStartHeight(textstartheight)
 	{
 		m_Sprites = new SpriteList(MAX_SPTITES);
 		m_SpriteCount = 0;
@@ -160,5 +162,25 @@ namespace Pman
 				DrawRectangleLinesEx(rec, 1.0f, WHITE);
 			}
 		}
+	}
+	void Renderer::RenderScore(const uint32_t score)
+	{
+		Font font = GetFontDefault();
+		std::string scoretext = std::format("Score: {}", score);
+		float xpos = m_Width * 0.33f;
+		Vector2 textsize = MeasureTextEx(font, scoretext.c_str(), 30.0f, 2.5f);
+		Vector2 position{ xpos,static_cast<float>(m_TextStartHeight) };
+		Vector2 origin{ (textsize.x / 2),0.0f };
+		DrawTextPro(font, scoretext.c_str(), position, origin, 0.0f, 30.0f, 2.5f, WHITE);
+	}
+	void Renderer::RenderPlayerLives(const uint32_t playerlives)
+	{
+		Font font = GetFontDefault();
+		std::string scoretext = std::format("Lives: {}", playerlives);
+		float xpos = m_Width * 0.66f;
+		Vector2 textsize = MeasureTextEx(font, scoretext.c_str(), 30.0f, 2.5f);
+		Vector2 position{ xpos, static_cast<float>(m_TextStartHeight) };
+		Vector2 origin{ (textsize.x / 2),0.0f };
+		DrawTextPro(font, scoretext.c_str(), position, origin, 0.0f, 30.0f, 2.5f, WHITE);
 	}
 }
