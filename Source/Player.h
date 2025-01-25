@@ -48,6 +48,7 @@ namespace Pman
 
 		void StartGame();
 		void LooseALife();
+		void EatenGhost();
 
 		Vec2<int32_t> GetPosition() const { return m_Position; }
 		uint32_t GetScore() const { return m_Score; }

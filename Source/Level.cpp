@@ -221,7 +221,7 @@ namespace Pman
 					ASSERT(!m_Player, "Already have a player!");
 					PlayerSpecification pspec{};
 					pspec.InitialPosition = { static_cast<int32_t>(column),static_cast<int32_t>(row) };
-					pspec.MoveSpeed = 20.0f;
+					pspec.MoveSpeed = 35.0f;
 					pspec.PlayerLives = 3;
 					pspec.PlayerSprite = m_PlayerSprite;
 					pspec.TileSize = m_TileSize;
@@ -594,6 +594,7 @@ namespace Pman
 			{
 				INFO("Collided with Red ghost at {} and Powerpellet was active", position);
 				m_RedGhost->SetEaten();
+				m_Player->EatenGhost();
 			}
 			else
 			{
@@ -608,6 +609,7 @@ namespace Pman
 			{
 				INFO("Collided with Cyan ghost at {} and Powerpellet was active", position);
 				m_CyanGhost->SetEaten();
+				m_Player->EatenGhost();
 			}
 			else
 			{
@@ -621,6 +623,7 @@ namespace Pman
 			{
 				INFO("Collided with Pink ghost at {} and Powerpellet was active", position);
 				m_PinkGhost->SetEaten();
+				m_Player->EatenGhost();
 			}
 			else
 			{
@@ -634,6 +637,7 @@ namespace Pman
 			{
 				INFO("Collided with Orange ghost at {} and Powerpellet was active", position);
 				m_OrangeGhost->SetEaten();
+				m_Player->EatenGhost();
 			}
 			else
 			{

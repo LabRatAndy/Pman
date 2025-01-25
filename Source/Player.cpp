@@ -119,4 +119,8 @@ namespace Pman
 			m_LostLifeTimer = 5.0f; //5 seconds to get clear when you loose a live 
 		}
 	}
+	void Player::EatenGhost()
+	{
+		m_Score += 200;
+	}
 }
