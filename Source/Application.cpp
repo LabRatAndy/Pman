@@ -50,13 +50,6 @@ namespace Pman
 			m_Level->OnRender();
 
 			m_Renderer->EndFrame();
-			//TODO only do 10 frames to test ghost pathfinding
-			/*static uint32_t framecount = 0;
-			framecount++;
-			if (framecount > 130)
-			{
-				break;
-			}*/
 		}
 	}
 }
