@@ -265,7 +265,7 @@ namespace Pman
 				
 			}
 		}
-		ProcessRectangles();
+		//ProcessRectangles();
 		ProcessAdjacentTiles();
 	}
 	void Level::OnUpdate(float ts)
@@ -398,123 +398,6 @@ namespace Pman
 		}
 		return false;
 	}
-	void Level::ProcessRectangles()
-	{
-		for (const Tile& tile : m_Tiles)
-		{
-			switch (tile.GetTileType())
-			{
-			case TileType::Wall:
-			{
-				Rectangle rect;
-				rect.x = (float)tile.GetAbsoluteXPosition();
-				rect.y = (float)tile.GetAbsoluteYPosition();
-				rect.width = (float)m_TileSize - 4.0f;
-				rect.height = (float)m_TileSize - 4.0f;
-				m_WallsRectangles.emplace_back(rect);
-				break;
-			}
-			case TileType::Door:
-			{
-				Rectangle rect;
-				rect.x = (float)tile.GetAbsoluteXPosition();
-				rect.y = (float)tile.GetAbsoluteYPosition();
-				rect.width = (float)m_TileSize - 4.0f;
-				rect.height = (float)m_TileSize - 4.0f;
-				m_DoorRectangles.emplace_back(rect);
-				break;
-			}
-			case TileType::Gem:
-			{
-				Rectangle rect;
-				rect.x = (float)tile.GetAbsoluteXPosition();
-				rect.y = (float)tile.GetAbsoluteYPosition();
-				rect.width = (float)m_TileSize;
-				rect.height = (float)m_TileSize;
-				m_GemsRectangles.emplace_back(rect);
-				break;
-			}
-			case TileType::PowerPellet:
-			{
-				Rectangle rect;
-				rect.x = (float)tile.GetAbsoluteXPosition();
-				rect.y = (float)tile.GetAbsoluteYPosition();
-				rect.width = (float)m_TileSize;
-				rect.height = (float)m_TileSize;
-				m_PowerPelletRectangles.emplace_back(rect);
-				break;
-			}
-			}
-		}
-	}
-	bool Level::IsTileAWall(const float& x, const float& y, const Vec2<int32_t>& direction, const bool canusedoor) const
-	{
-		for (const auto& wall : m_WallsRectangles)
-		{
-			if (direction.X == -1)
-			{
-				Rectangle rect{ static_cast<float>(x - m_TileSize),y,static_cast<float>(m_TileSize + 1), 5.0f };
-				if (CheckCollisionRecs(rect, wall))
-				{
-					return true;
-				}
-			}
-			else if (direction.X == 1)
-			{
-				Rectangle rect{ x,y,static_cast<float>(m_TileSize + 1), 5.0f };
-				if (CheckCollisionRecs(rect, wall))
-				{
-					return true;
-				}
-			}
-			else if (direction.Y == -1)
-			{
-				Rectangle rect{ x,static_cast<float>(y - m_TileSize),5.0f,static_cast<float>(m_TileSize + 1) };
-				if (CheckCollisionRecs(rect, wall))
-				{
-					return true;
-				}
-			}
-			else if (direction.Y == 1)
-			{
-				Rectangle rect{ x, y,5.0f,static_cast<float>(m_TileSize + 1) };
-				if (CheckCollisionRecs(rect, wall))
-				{
-					return true;
-				}
-			}
-		}
-		
-		for (const auto& door : m_DoorRectangles)
-		{
-			if (direction.Y == -1)
-			{
-				Rectangle rect{ x,static_cast<float>(y - m_TileSize),5.0f,static_cast<float>(m_TileSize + 1) };
-				if (CheckCollisionRecs(rect, door))
-				{
-					if (canusedoor)
-					{
-						return false;
-					}
-					return true;
-				}
-			}
-			else if (direction.Y == 1)
-			{
-				Rectangle rect{ x,y,5.0f,static_cast<float>(m_TileSize + 1) };
-				if (CheckCollisionRecs(rect, door))
-				{
-					if (canusedoor)
-					{
-						return false;
-					}
-					return true;
-				}
-			}
-		}
-		
-		return false;
-	}
 	void Level::StartGame()
 	{
 		m_Player->StartGame();
@@ -645,5 +528,13 @@ namespace Pman
 				m_Player->LooseALife();
 			}
 		}
+	}
+	bool Level::IsGameOver() const
+	{
+		if (m_Player->GetPlayerLives() == 0)
+		{
+			return true;
+		}
+		return false;
 	}
 }

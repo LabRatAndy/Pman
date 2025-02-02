@@ -6,7 +6,6 @@
 #include <vector>
 #include <string>
 
-#include <raylib.h>
 namespace Pman
 {
 	
@@ -47,6 +46,7 @@ namespace Pman
 
 		void StartGame();
 
+		bool IsGameOver() const;
 		//void Reset();
 
 		int32_t GetLevelWidthInTiles() const { return m_LevelWidth; }
@@ -61,8 +61,7 @@ namespace Pman
 		void CollideWithGhost(const Vec2<int32_t>& position) const;
 		bool CollectGem(const Vec2<int32_t>& position);
 		bool CollectPowerPellet(const Vec2<int32_t>& position);
-		//bool CollideWithWall(const uint32_t& tilex, const uint32_t& tiley, const Vec2<int32_t>& direction, const bool& canusedoor);
-		bool IsTileAWall(const float& x, const float& y,const Vec2<int32_t>& direction, const bool canusedoor) const;
+		
 
 		const std::array<int32_t, 4>& GetAdjacentTileList(size_t tile) const { return m_Tiles[tile].GetAdjacentTile(); }
 		const Tile& GetTile(const size_t index) const { return m_Tiles[index]; }
@@ -111,13 +110,6 @@ namespace Pman
 		//tile vector
 		std::vector<Tile> m_Tiles;
 
-		//collison rectange vectors
-		std::vector<Rectangle> m_WallsRectangles;
-		std::vector<Rectangle> m_GemsRectangles;
-		std::vector<Rectangle> m_PowerPelletRectangles;
-		std::vector<Rectangle> m_DoorRectangles;
-
-		void ProcessRectangles();
 		void ProcessAdjacentTiles();
 
 		//ghosts and player objects
