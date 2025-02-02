@@ -2,6 +2,7 @@
 #include "Sprite.h"
 #include "Maths.h"
 #include <filesystem>
+#include <string>
 
 namespace Pman
 {
@@ -27,10 +28,12 @@ namespace Pman
 		void RenderTile(const Tile& tile);
 		void RenderSprite(const Sprite* sprite, uint32_t xpos, uint32_t ypos, uint32_t tilesize);
 		void RenderRectangle(uint32_t xpos, uint32_t ypos, uint32_t tilesize, Vec4<uint8_t> colour);
+		void RenderRectangle(uint32_t xpos, uint32_t ypos, uint32_t width, uint32_t height, Vec4<uint8_t> colour);
 		void RenderTest();
 		void RenderGridLines(uint32_t tilesize);
 		void RenderScore(const uint32_t score);
 		void RenderPlayerLives(const uint32_t playerlives);
+		void RenderText(const std::string& text, uint32_t xpos, uint32_t ypos, float size, float spacing, Vec4<uint8_t> colour);
 
 	private:
 		uint32_t m_Width = 0;

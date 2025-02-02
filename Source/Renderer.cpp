@@ -56,6 +56,10 @@ namespace Pman
 	{
 		DrawRectangle(xpos, ypos, tilesize, tilesize, { colour.X,colour.Y,colour.Z,colour.W });
 	}
+	void Renderer::RenderRectangle(uint32_t xpos, uint32_t ypos, uint32_t width, uint32_t height, Vec4<uint8_t> colour)
+	{
+		DrawRectangle(xpos, ypos, width, height, { colour.X,colour.Y,colour.Z,colour.W });
+	}
 	void Renderer::RenderTest()
 	{
 		DrawText("Hello", 10, 10, 20, RED);
@@ -182,5 +186,13 @@ namespace Pman
 		Vector2 position{ xpos, static_cast<float>(m_TextStartHeight) };
 		Vector2 origin{ (textsize.x / 2),0.0f };
 		DrawTextPro(font, scoretext.c_str(), position, origin, 0.0f, 30.0f, 2.5f, WHITE);
+	}
+	void Renderer::RenderText(const std::string& text, uint32_t xpos, uint32_t ypos, float size, float spacing, Vec4<uint8_t> colour)
+	{
+		Font font = GetFontDefault();
+		Vector2 position{ static_cast<float>(xpos), static_cast<float>(ypos) };
+		Vector2 textsize = MeasureTextEx(font, text.c_str(), size, spacing);
+		Vector2 origin{ textsize.x / 2,textsize.y / 2 };
+		DrawTextPro(font, text.c_str(), position, origin, 0.0f, size, spacing, { colour.X,colour.Y,colour.Z, colour.W });
 	}
 }
