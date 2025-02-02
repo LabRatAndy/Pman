@@ -40,16 +40,37 @@ namespace Pman
 				started = true;
 			}
 			timedelta = m_Window->GetTimeDelta();
-			//update game/level
-			m_Level->OnUpdate(timedelta);
+			if (m_Level->IsGameOver())
+			{
+				DrawGameOver();
+			}
+			else
+			{
+				//update game/level
+				m_Level->OnUpdate(timedelta);
 
-			m_Renderer->BeginFrame();
-			m_Renderer->Clear(0, 0, 0, 0);
+				m_Renderer->BeginFrame();
+				m_Renderer->Clear(0, 0, 0, 0);
 
-			//render game/level
-			m_Level->OnRender();
+				//render game/level
+				m_Level->OnRender();
 
-			m_Renderer->EndFrame();
+				m_Renderer->EndFrame();
+			}
 		}
+	}
+	void Application::DrawGameOver()
+	{
+		uint32_t height = m_Level->GetAbsoluteHeight() / 3;
+		uint32_t width = m_Level->GetAbsoluteWidth() / 2;
+		uint32_t xpos = static_cast<uint32_t>(m_Level->GetAbsoluteWidth() * 0.25);
+		uint32_t ypos = m_Level->GetAbsoluteHeight() / 3;
+		m_Renderer->BeginFrame();
+		m_Renderer->Clear(0, 0, 0, 0);
+		m_Renderer->RenderRectangle(xpos, ypos, width, height, { 250,50,50,255 });
+		xpos = xpos + width / 2;
+		ypos = ypos + height / 2;
+		m_Renderer->RenderText("Game over!", xpos, ypos, 40.0f, 2.5f, { 255,255,255,255 });
+		m_Renderer->EndFrame();
 	}
 }

@@ -35,5 +35,7 @@ namespace Pman
 		Renderer* m_Renderer = nullptr;
 		Level* m_Level = nullptr;
 		ApplicationSpecification m_Specification;
+
+		void DrawGameOver();
 	};
 }
