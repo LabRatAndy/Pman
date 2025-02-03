@@ -11,26 +11,6 @@
 
 namespace Pman
 {
-	//static void ReduceTargetVector(Vec2<int32_t>& target, const Vec2<int32_t>& direction)
-	//{
-	//	TRACE("Reduce target vector inputs are: target {},{}; direction {},{}", static_cast<int32_t>(target.X), static_cast<int32_t>(target.Y), static_cast<int32_t>(direction.X), static_cast<int32_t>(direction.Y));
-	//	//work out which is the greater X or Y
-	//	if (direction.X < direction.Y)
-	//	{
-	//		float reductionvalue = static_cast<float>(direction.Y) / static_cast<float>(direction.X);
-	//		target.X = static_cast<int32_t>(std::round(target.X - reductionvalue));
-	//		target.Y = target.Y - 1;
-	//		TRACE("X is less than Y, Reduction value is {}, target reduced to {}, {}", static_cast<float>(reductionvalue), static_cast<int32_t>(target.X), static_cast<int32_t>(target.Y));
-	//	}
-	//	else
-	//	{
-	//		float reductionvalue = static_cast<float>(direction.X) / static_cast<float>(direction.Y);
-	//		target.Y = static_cast<int32_t>(std::round(target.Y - reductionvalue));
-	//		target.X = target.X - 1;
-	//		TRACE("Y is less than X, Reduction value is {}, target reduced to {}, {}", static_cast<float>(reductionvalue), static_cast<int32_t>(target.X), static_cast<int32_t>(target.Y));
-	//	}
-	//	TRACE("invalid result of X is less than Y the value of direction was: {}, {}", static_cast<int32_t>(direction.X), static_cast<int32_t>(direction.Y));
-	//}
 	bool Ghost::TileIsAbleToMoveTo(const Vec2<int32_t>& target) const
 	{
 		if (target.X >= 0 && target.X < m_Specification.LevelCallback->GetLevelWidthInTiles() && target.Y >= 0 && target.Y < m_Specification.LevelCallback->GetLevelHeightInTiles())
@@ -57,16 +37,14 @@ namespace Pman
 			return;
 		if (m_Status == GhostStatus::IsBlue)
 		{
-			TRACE("Running is blue code!");
-			TRACE("Pixel pos is {}", m_PixelPosition);
+			
 			if (m_FrightenedTimer <= 0.0f)
 			{
 				// ghost back to normal
 				m_Status = GhostStatus::Running;
-				TRACE("Ghost back to normal");
 			}
 			m_FrightenedTimer -= ts;
-			TRACE("Frightened timer is now {}", m_FrightenedTimer);
+			
 		}
 		UpdateTarget();
 		ASSERT((m_Target.X <= m_Specification.LevelCallback->GetLevelWidthInTiles()), "Error invalid target width");
@@ -79,8 +57,6 @@ namespace Pman
 			}
 			FindPath(m_Position);
 			const auto& tile = m_Specification.LevelCallback->GetTile(m_TileToMoveToIndex);
-			TRACE("Current position is: {}", m_Position);
-			TRACE("Tile to move to is: {},{}", tile.GetTileXPosition(), tile.GetTileYPosition());
 			if (m_Position.X > tile.GetTileXPosition() && m_Direction.X != 1)
 			{
 				//need togo left
@@ -143,11 +119,8 @@ namespace Pman
 		}
 		{
 			//now move the ghost 
-			TRACE("Movespeed is: {} Timestep is: {}", m_Specification.MoveSpeed, ts);
-			TRACE("Initial Pixel Position: {}", m_PixelPosition);
 			m_PixelPosition.X = m_PixelPosition.X + static_cast<int32_t>(m_Direction.X * (m_Specification.MoveSpeed * ts));
 			m_PixelPosition.Y = m_PixelPosition.Y + static_cast<int32_t>(m_Direction.Y * (m_Specification.MoveSpeed * ts));
-			TRACE("New pixel position: {}", m_PixelPosition);
 			//check for going though the tunnel from 1 size to the other
 			if (m_PixelPosition.X <= 0)
 			{
@@ -162,12 +135,10 @@ namespace Pman
 			if (m_PixelPosition.X % m_Specification.TileSize == 0)
 			{
 				m_Position.X = static_cast<int32_t>(std::floor(m_PixelPosition.X / m_Specification.TileSize));
-				TRACE("Safe to mode switch!");
 				m_SafeToModeSwitchX = true;
 			}
 			else
 			{
-				TRACE("Not safe to mode switch. Pixel pos: {}", m_PixelPosition);
 				m_SafeToModeSwitchX = false;
 			}
 			if (m_PixelPosition.Y % m_Specification.TileSize == 0)
@@ -238,11 +209,10 @@ namespace Pman
 
 	void Ghost::SetPowerPelletActivated()
 	{
-		TRACE("Power pellet collected ghost is blue");
 		m_Status = GhostStatus::IsBlue;
 		m_Mode = GhostMode::Scatter;
 		m_FrightenedTimer = 15.0f;
-		TRACE("Frightened timer set to {}", m_FrightenedTimer);
+
 	}
 	void Ghost::SetEaten()
 	{
@@ -275,34 +245,6 @@ namespace Pman
 				break;
 			case GhostType::Cyan: // yes I know the prototype is 2nd cell in fromt of the pacman then double the vector from red ghost but I can not get this to work reliably so am changing it to be the same as red ghost ie. target pacman
 			{
-				////need to check that selected tile is not a wall and actually reachable 
-				//auto pmanpos = m_Specification.LevelCallback->GetPacmanPosition();
-				//auto pmandirection = m_Specification.LevelCallback->GetPacmanDirection();
-				//auto redghostpos = m_Specification.LevelCallback->GetRedGhostPosition();
-				////check that pacman is moving 
-				//if (pmandirection.X == 0 && pmandirection.Y == 0)
-				//{
-				//	pmanpos.X += 2;
-				//}
-				//else
-				//{
-				//	pmanpos.X += pmandirection.X * 2;
-				//	pmanpos.Y += pmandirection.Y * 2;
-				//}
-				//Vec2<int32_t> direction{ (redghostpos.X - pmanpos.X),-(redghostpos.Y - pmanpos.Y) }; //Y needs to be inverted due to origin being in the top left not bottom left.
-				//direction * 2;
-				//TRACE("answer values are: {}, {}", (int32_t)direction.X, (int32_t)direction.Y);
-				//m_Target.X = redghostpos.X + direction.X;
-				//m_Target.Y = redghostpos.Y + direction.Y;
-				//TRACE("Position of double the length of vector from RED to 2 spaces in front of pacman: {}, {}", (int32_t)m_Target.X, (int32_t)m_Target.Y);
-				////check if it is valid to move to the target tile 
-				//while (!TileIsAbleToMoveTo(m_Target))
-				//{
-				//	TRACE("In Cyan ghost reduction loop");
-				//	ReduceTargetVector(m_Target, direction);
-				//	ASSERT((m_Target.X >= 0), "invalid target set");
-				//	ASSERT((m_Target.Y >= 0), "invalid target set");
-				//}
 				m_Target = m_Specification.LevelCallback->GetPacmanPosition();
 				TRACE("Cyan Ghost chase mode target set to be: {}", m_Target);
 				return;

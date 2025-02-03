@@ -221,7 +221,7 @@ namespace Pman
 					ASSERT(!m_Player, "Already have a player!");
 					PlayerSpecification pspec{};
 					pspec.InitialPosition = { static_cast<int32_t>(column),static_cast<int32_t>(row) };
-					pspec.MoveSpeed = 35.0f;
+					pspec.MoveSpeed = 60.0f;
 					pspec.PlayerLives = 3;
 					pspec.PlayerSprite = m_PlayerSprite;
 					pspec.TileSize = m_TileSize;
@@ -305,7 +305,6 @@ namespace Pman
 	/// <returns>true on collision with wall</returns>
 	bool Level::CollideWithWall(const Vec2<int32_t>& position, const Vec2<int32_t>& direction) const
 	{
-		TRACE("\nNew collsion check!");
 		// Get the player's bounding box in world space
 		Rect<int32_t> playerrect = { position.X,position.X + m_TileSize,position.Y,position.Y + m_TileSize };
 		
@@ -323,13 +322,9 @@ namespace Pman
 			{
 				// Get the tile boundaries in pixels
 				Rect tilerect = { x * m_TileSize,(x + 1) * m_TileSize,y * m_TileSize,(y + 1) * m_TileSize };
-				TRACE("Player Position {}", position);
-				TRACE("Tile Bounds: {}", tilerect);
-
 				// Check if the player's bounding box intersects with the tile
 				if (CheckCollision(playerrect, tilerect))
 				{
-					TRACE("Collsion detectected with tile index: {} at coordinates: {},{}", GetTileIndex({ x, y }, m_LevelWidth), x, y);
 					// If tile is a wall, prevent movement in that direction
 					if (m_Tiles[GetTileIndex({ x, y }, m_LevelWidth)].GetTileType() == TileType::Wall || m_Tiles[GetTileIndex({ x, y }, m_LevelWidth)].GetTileType() == TileType::Door)
 					{
@@ -422,7 +417,6 @@ namespace Pman
 				line++;
 				column = 0;
 			}
-			//ASSERT((line != 5), "test");
 			if (column >= 1 && column < m_LevelWidth)
 			{
 				if (m_Tiles[tileindex - 1].GetTileType() != TileType::Wall)
