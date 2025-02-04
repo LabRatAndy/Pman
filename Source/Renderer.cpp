@@ -38,8 +38,6 @@ namespace Pman
 			break;
 		}
 	}
-#pragma warning (push)
-#pragma warning (disable : 4100)
 	void Renderer::RenderSprite(const Sprite* sprite, uint32_t xpos, uint32_t ypos, uint32_t tilesize)
 	{
 		ASSERT(sprite, "Sprite cannot be nullptr");
@@ -50,8 +48,6 @@ namespace Pman
 		DrawTexturePro(texture, source, dest, origin, 0.0f, WHITE);
 		
 	}
-#pragma warning (pop)
-
 	void Renderer::RenderRectangle(uint32_t xpos, uint32_t ypos, uint32_t tilesize, Vec4<uint8_t> colour)
 	{
 		DrawRectangle(xpos, ypos, tilesize, tilesize, { colour.X,colour.Y,colour.Z,colour.W });
