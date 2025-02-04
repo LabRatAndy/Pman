@@ -1,4 +1,6 @@
 #pragma once
+#include "Keys.h"
+
 #include <string>
 namespace Pman
 {
@@ -21,5 +23,11 @@ namespace Pman
 		float GetTimeDelta() const;
 		//Gets Time since window was created in seconds
 		double GetAbsoluteTime() const;
+
+		bool GetKeyDown(Key key) const;
+		bool GetKeyPressed(Key key) const;
+		bool GetKeyPressedRepeat(Key key) const;
+		bool GetKeyRelease(Key key) const;
+		bool GetKeyUP(Key key) const;
 	};
 }

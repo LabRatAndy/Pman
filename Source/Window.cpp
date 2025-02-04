@@ -26,4 +26,24 @@ namespace Pman
 	{
 		return GetTime();
 	}
+	bool Window::GetKeyDown(Key key) const
+	{
+		return IsKeyDown(static_cast<int>(key));
+	}
+	bool Window::GetKeyPressed(Key key) const
+	{
+		return IsKeyPressed(static_cast<int>(key));
+	}
+	bool Window::GetKeyPressedRepeat(Key key) const
+	{
+		return IsKeyPressedRepeat(static_cast<int>(key));
+	}
+	bool Window::GetKeyRelease(Key key) const
+	{
+		return IsKeyReleased(static_cast<int>(key));
+	}
+	bool Window::GetKeyUP(Key key) const
+	{
+		return IsKeyUp(static_cast<int>(key));
+	}
 }
