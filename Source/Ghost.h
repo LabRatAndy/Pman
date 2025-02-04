@@ -55,7 +55,6 @@ namespace Pman
 		void OnUpdate(float ts);
 		void OnRender();
 
-		void Reset();
 		void StartGame();
 
 		GhostStatus GetStatus() const { return m_Status; }

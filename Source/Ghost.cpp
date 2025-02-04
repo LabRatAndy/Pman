@@ -198,10 +198,6 @@ namespace Pman
 			break;
 		}
 	}
-	void Ghost::Reset()
-	{
-
-	}
 	void Ghost::StartGame()
 	{
 		m_Status = GhostStatus::Running;

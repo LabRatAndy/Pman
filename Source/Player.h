@@ -44,8 +44,6 @@ namespace Pman
 		void OnUpdate(float ts);
 		void OnRender();
 
-		void Reset();
-
 		void StartGame();
 		void LooseALife();
 		void EatenGhost();

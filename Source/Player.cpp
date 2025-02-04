@@ -102,10 +102,6 @@ namespace Pman
 		//update m_Position
 		SetTileCoordsFromOriginAndPixelPosition(m_Position, m_PixelPosition, m_Specification.TileSize);
 	}
-	void Player::Reset()
-	{
-		//TODO
-	}
 	void Player::StartGame()
 	{
 		m_Status = PlayerStatus::Running;

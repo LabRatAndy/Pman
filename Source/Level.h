@@ -47,7 +47,6 @@ namespace Pman
 		void StartGame();
 
 		bool IsGameOver() const;
-		//void Reset();
 
 		int32_t GetLevelWidthInTiles() const { return m_LevelWidth; }
 		int32_t GetLevelHeightInTiles() const { return m_LevelHeight; }
