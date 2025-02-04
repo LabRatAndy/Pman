@@ -4,8 +4,8 @@
 #include "Level.h"
 #include "Assert.h"
 #include "utills.h"
+#include "Window.h"
 
-#include <raylib.h>
 
 #include <iostream>
 namespace Pman
@@ -51,19 +51,20 @@ namespace Pman
 		}
 		m_Specification.LevelCallback->CollideWithGhost(m_PixelPosition);
 		//player movement
-		if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP) /* && m_Status == PlayerStatus::Running*/)
+		const Window& window = Application::Get().GetWindow();
+		if (window.GetKeyDown(Key::W) || window.GetKeyDown(Key::UP) /* && m_Status == PlayerStatus::Running*/)
 		{
 			m_Direction.Y = -1;
 		}
-		else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT) /* && m_Status == PlayerStatus::Running*/)
+		else if (window.GetKeyDown(Key::A) || window.GetKeyDown(Key::LEFT) /* && m_Status == PlayerStatus::Running*/)
 		{
 			m_Direction.X = -1;
 		}
-		else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN) /* && m_Status == PlayerStatus::Running*/)
+		else if (window.GetKeyDown(Key::S) || window.GetKeyDown(Key::DOWN) /* && m_Status == PlayerStatus::Running*/)
 		{
 			m_Direction.Y = 1;
 		}
-		else if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT) /* && m_Status == PlayerStatus::Running*/)
+		else if (window.GetKeyDown(Key::D) || window.GetKeyDown(Key::RIGHT) /* && m_Status == PlayerStatus::Running*/)
 		{
 			m_Direction.X = 1;
 		}
