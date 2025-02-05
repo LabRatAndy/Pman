@@ -37,6 +37,7 @@ namespace Pman
 		ApplicationSpecification m_Specification;
 
 		void DrawGameOver();
+		void DrawStartScreen();
 		
 		void ResetLevel();
 	};
