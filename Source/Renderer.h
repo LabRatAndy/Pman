@@ -18,6 +18,8 @@ namespace Pman
 		Renderer(uint32_t width, uint32_t height,uint32_t textstartheight);
 		~Renderer();
 
+		void ResetSprites();
+
 		void Initialise(uint32_t FPS);
 		void Clear(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
 		void BeginFrame();
@@ -34,6 +36,8 @@ namespace Pman
 		void RenderScore(const uint32_t score);
 		void RenderPlayerLives(const uint32_t playerlives);
 		void RenderText(const std::string& text, uint32_t xpos, uint32_t ypos, float size, float spacing, Vec4<uint8_t> colour);
+
+		Vec2<int32_t> MeasureText(const std::string& text, float size, float spacing) const;
 
 	private:
 		uint32_t m_Width = 0;

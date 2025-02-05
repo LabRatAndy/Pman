@@ -188,7 +188,19 @@ namespace Pman
 		Font font = GetFontDefault();
 		Vector2 position{ static_cast<float>(xpos), static_cast<float>(ypos) };
 		Vector2 textsize = MeasureTextEx(font, text.c_str(), size, spacing);
-		Vector2 origin{ textsize.x / 2,textsize.y / 2 };
+		Vector2 origin{ 0,0 };
 		DrawTextPro(font, text.c_str(), position, origin, 0.0f, size, spacing, { colour.X,colour.Y,colour.Z, colour.W });
+	}
+	Vec2<int32_t> Renderer::MeasureText(const std::string& text, float size, float spacing) const
+	{
+		Font font = GetFontDefault();
+		Vector2 textmeasurement = MeasureTextEx(font, text.c_str(), size, spacing);
+		return { static_cast<int32_t>(textmeasurement.x),static_cast<int32_t>(textmeasurement.y) };
+	}
+	void Renderer::ResetSprites()
+	{
+		delete m_Sprites;
+		m_SpriteCount = 0;
+		m_Sprites = new SpriteList(MAX_SPTITES);
 	}
 }
