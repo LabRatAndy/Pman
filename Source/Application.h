@@ -36,9 +36,11 @@ namespace Pman
 		Level* m_Level = nullptr;
 		ApplicationSpecification m_Specification;
 
-		void DrawGameOver();
-		void DrawStartScreen();
+		void DrawGameOver() const;
+		void DrawStartScreen() const;
+		void DrawPausedScreen() const;
 		
 		void ResetLevel();
+
 	};
 }

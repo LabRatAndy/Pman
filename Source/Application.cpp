@@ -75,12 +75,16 @@ namespace Pman
 						paused = true;
 					}
 				}
+				if (paused)
+				{
+					DrawPausedScreen();
+				}
 
 				m_Renderer->EndFrame();
 			}
 		}
 	}
-	void Application::DrawGameOver()
+	void Application::DrawGameOver() const
 	{
 		Vec2<int32_t> gameoversize = m_Renderer->MeasureText("Game over!", 40.0f, 2.5f);
 		Vec2<int32_t> pressspacesize = m_Renderer->MeasureText("Press space to play again!", 40.0f, 2.5f);
@@ -107,9 +111,9 @@ namespace Pman
 		uint32_t winheight = m_Level->GetAbsoluteHeight() + (m_Specification.TextTilesHigh * m_Specification.TileSize);
 		m_Window->ChangeWindowSize(m_Level->GetAbsoluteWidth(), winheight);
 	}
-	void Application::DrawStartScreen()
+	void Application::DrawStartScreen() const
 	{
-		Vec2<int32_t> textsizeln1 = m_Renderer->MeasureText("Welcome to LabRatMan", 40.f, 2.5f);
+		Vec2<int32_t> textsizeln1 = m_Renderer->MeasureText("Welcome to LabRatMan", 40.0f, 2.5f);
 		Vec2<int32_t> textsizeln2 = m_Renderer->MeasureText("Press space to start game", 40.0f, 2.5f);
 		Vec2<int32_t> textsizeln3 = m_Renderer->MeasureText("Press P to pause, Esc to quit", 40.0f, 2.5f);
 		uint32_t height = textsizeln1.Y + textsizeln2.Y + textsizeln3.Y + 10;
@@ -125,5 +129,20 @@ namespace Pman
 		m_Renderer->RenderText("Press space to start game", xpos, ypos, 40.0f, 2.5f, { 255,255,255,255 });
 		ypos = ypos + textsizeln2.Y;
 		m_Renderer->RenderText("Press P to pause, Esc to quit", xpos, ypos, 40.0f, 2.5f, { 255,255,255,255 });
+	}
+	void Application::DrawPausedScreen() const
+	{
+		Vec2<int32_t> line1size = m_Renderer->MeasureText("Paused", 40.0f, 2.5f);
+		Vec2<int32_t> line2size = m_Renderer->MeasureText("Press P to continue", 40.0f, 2.5f);
+		uint32_t height = line1size.Y + line2size.Y + 10;
+		uint32_t width = std::max({ line1size.X,line2size.X }) + 10;
+		uint32_t xpos = (m_Level->GetAbsoluteWidth() - width) / 2;
+		uint32_t ypos = (m_Level->GetAbsoluteHeight() - height) / 2;
+		m_Renderer->RenderRectangle(xpos, ypos, width, height, { 250,50,50,175 });
+		xpos = xpos + 5;
+		ypos = ypos + 5;
+		m_Renderer->RenderText("Paused", xpos, ypos, 40.0f, 2.5f, { 255,255,255,255 });
+		ypos = ypos + line1size.Y;
+		m_Renderer->RenderText("Press P to continue", xpos, ypos, 40.0f, 2.5f, { 255,255,255,255 });
 	}
 }
