@@ -39,13 +39,11 @@ namespace Pman
 		while (!m_Window->ShouldWindowClose())
 		{
 			//temporary needs to be finessed!
-			static bool started = false;
-			static bool paused = false;
 			timedelta = m_Window->GetTimeDelta();
 			if (m_Level->IsGameOver())
 			{
 				DrawGameOver();
-				if (m_Window->GetKeyPressed(Key::SPACE))
+				if (m_Window->GetKeyPressed(Key::ENTER))
 				{
 					ResetLevel();
 				}
@@ -53,7 +51,7 @@ namespace Pman
 			else
 			{
 				//update game/level
-				if (!paused)
+				if (!m_Paused)
 				{
 					m_Level->OnUpdate(timedelta);
 				}
@@ -62,27 +60,27 @@ namespace Pman
 				m_Renderer->Clear(0, 0, 0, 0);
 				//render game/level
 				m_Level->OnRender();
-				if (!started)
+				if (!m_Started)
 				{
 					DrawStartScreen();
 					if (m_Window->GetKeyPressed(Key::SPACE))
 					{
 						m_Level->StartGame();
-						started = true;
+						m_Started = true;
 					}
 				}
 				else
 				{
-					if (paused && m_Window->GetKeyPressed(Key::P))
+					if (m_Paused && m_Window->GetKeyPressed(Key::P))
 					{
-						paused = false;
+						m_Paused = false;
 					}
-					else if (!paused && m_Window->GetKeyPressed(Key::P))
+					else if (!m_Paused && m_Window->GetKeyPressed(Key::P))
 					{
-						paused = true;
+						m_Paused = true;
 					}
 				}
-				if (paused)
+				if (m_Paused)
 				{
 					DrawPausedScreen();
 				}
@@ -94,7 +92,7 @@ namespace Pman
 	void Application::DrawGameOver() const
 	{
 		Vec2<int32_t> gameoversize = m_Renderer->MeasureText("Game over!", FONTSIZE, FONTSPACING);
-		Vec2<int32_t> pressspacesize = m_Renderer->MeasureText("Press space to play again!", FONTSIZE, FONTSPACING);
+		Vec2<int32_t> pressspacesize = m_Renderer->MeasureText("Press Enter to play again!", FONTSIZE, FONTSPACING);
 		uint32_t height = gameoversize.Y + pressspacesize.Y + (TEXTBOXPADDING * 2);
 		uint32_t width = (gameoversize.X > pressspacesize.X ? gameoversize.X : pressspacesize.X) + (TEXTBOXPADDING * 2);
 		uint32_t xpos = (m_Level->GetAbsoluteWidth() - width) / 2;
@@ -117,6 +115,8 @@ namespace Pman
 		m_Level->LoadLevel();
 		uint32_t winheight = m_Level->GetAbsoluteHeight() + (m_Specification.TextTilesHigh * m_Specification.TileSize);
 		m_Window->ChangeWindowSize(m_Level->GetAbsoluteWidth(), winheight);
+		m_Started = false;
+		m_Paused = false;
 	}
 	void Application::DrawStartScreen() const
 	{

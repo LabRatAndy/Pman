@@ -35,6 +35,8 @@ namespace Pman
 		Renderer* m_Renderer = nullptr;
 		Level* m_Level = nullptr;
 		ApplicationSpecification m_Specification;
+		bool m_Started = false;
+		bool m_Paused = false;
 
 		void DrawGameOver() const;
 		void DrawStartScreen() const;
