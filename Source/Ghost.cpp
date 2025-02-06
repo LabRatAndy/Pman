@@ -32,7 +32,6 @@ namespace Pman
 	}
 	void Ghost::OnUpdate(float ts)
 	{
-		TRACE("New frame on update\n");
 		if (m_Status == GhostStatus::NotStarted) //the game is not running!
 			return;
 		if (m_Status == GhostStatus::IsBlue)
@@ -144,12 +143,10 @@ namespace Pman
 			if (m_PixelPosition.Y % m_Specification.TileSize == 0)
 			{
 				m_Position.Y = static_cast<int32_t>(std::floor(m_PixelPosition.Y / m_Specification.TileSize));
-				TRACE("Safe to mode switch!");
 				m_SafeToModeSwitchY = true;
 			}
 			else
 			{
-				TRACE("Not safe to mode switch. Pixel pos: {}", m_PixelPosition);
 				m_SafeToModeSwitchY = false;
 			}
 
@@ -162,7 +159,6 @@ namespace Pman
 			}
 			if (m_ModeTimerUp && m_SafeToModeSwitchX && m_SafeToModeSwitchY)
 			{
-				TRACE("Mode Switch");
 				if (m_Mode == GhostMode::Chase)
 				{
 					m_Mode = GhostMode::Scatter;
@@ -225,7 +221,6 @@ namespace Pman
 		{
 			//The ghost has a specific corner of the map send it there
 			m_Target = m_Specification.ScatterPosition;
-			TRACE("Scatter mode target set to {}", m_Target);
 			tooclose = false;
 			return;
 		}
@@ -236,13 +231,11 @@ namespace Pman
 			{
 			case GhostType::Red: // Targets pacman 
 				m_Target = m_Specification.LevelCallback->GetPacmanPosition();
-				TRACE("Red Ghost chase mode target set to be: {}", m_Target);
 				return;
 				break;
 			case GhostType::Cyan: // yes I know the prototype is 2nd cell in fromt of the pacman then double the vector from red ghost but I can not get this to work reliably so am changing it to be the same as red ghost ie. target pacman
 			{
 				m_Target = m_Specification.LevelCallback->GetPacmanPosition();
-				TRACE("Cyan Ghost chase mode target set to be: {}", m_Target);
 				return;
 				break;
 			}
@@ -270,7 +263,6 @@ namespace Pman
 						m_Target = m_Specification.ScatterPosition;
 					}
 				}
-				TRACE("Orange ghost chase mode target set to be {}", m_Target);
 				break;
 			}
 			case GhostType::Pink: //chase 4 tiles in front of pacman. Need to do clamping as could be possible to get value outside of the map!!
@@ -311,7 +303,6 @@ namespace Pman
 					}
 					adjustment--;
 				}
-				TRACE("Pink Ghost chase mode target set to be: {}", m_Target);
 				return;
 				break;
 			}

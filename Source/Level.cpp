@@ -294,8 +294,7 @@ namespace Pman
 		m_PinkGhost->OnRender();
 		m_OrangeGhost->OnRender();
 	}
-#pragma warning (push)
-#pragma warning (disable : 4100)
+
 	/// <summary>
 	/// Checks if you will collide with a wall 
 	/// </summary>
@@ -328,7 +327,6 @@ namespace Pman
 					// If tile is a wall, prevent movement in that direction
 					if (m_Tiles[GetTileIndex({ x, y }, m_LevelWidth)].GetTileType() == TileType::Wall || m_Tiles[GetTileIndex({ x, y }, m_LevelWidth)].GetTileType() == TileType::Door)
 					{
-						TRACE("Tile collided with is a wall");
 						//check collision left	
 						if (playerrect.Left < tilerect.Right)
 						{
@@ -367,7 +365,6 @@ namespace Pman
 		}
 		return retval;
 	}
-#pragma warning(pop)
 	
 	bool Level::CollectGem(const Vec2<int32_t>& position)
 	{
@@ -469,28 +466,23 @@ namespace Pman
 			
 			if (m_RedGhost->GetStatus() == GhostStatus::IsBlue) 
 			{
-				INFO("Collided with Red ghost at {} and Powerpellet was active", position);
 				m_RedGhost->SetEaten();
 				m_Player->EatenGhost();
 			}
 			else
 			{
-				INFO("Collided with Red ghost at {} and lost a life", position);
 				m_Player->LooseALife();
 			}
 		}
-		INFO("Player rect: {}. Cyan Ghost Rect: {}", playerrect, cyanghostrect);
 		if (CheckCollision(playerrect, cyanghostrect) && m_CyanGhost->GetStatus() != GhostStatus::EyesOnly)
 		{
 			if (m_CyanGhost->GetStatus() == GhostStatus::IsBlue)
 			{
-				INFO("Collided with Cyan ghost at {} and Powerpellet was active", position);
 				m_CyanGhost->SetEaten();
 				m_Player->EatenGhost();
 			}
 			else
 			{
-				INFO("Collided with Cyan ghost at {} and lost a life", position);
 				m_Player->LooseALife();
 			}
 		}
@@ -498,13 +490,11 @@ namespace Pman
 		{
 			if (m_PinkGhost->GetStatus() == GhostStatus::IsBlue)
 			{
-				INFO("Collided with Pink ghost at {} and Powerpellet was active", position);
 				m_PinkGhost->SetEaten();
 				m_Player->EatenGhost();
 			}
 			else
 			{
-				INFO("Collided with Pink ghost at {} and lost a life", position);
 				m_Player->LooseALife();
 			}
 		}
@@ -512,13 +502,12 @@ namespace Pman
 		{
 			if (m_OrangeGhost->GetStatus() == GhostStatus::IsBlue)
 			{
-				INFO("Collided with Orange ghost at {} and Powerpellet was active", position);
+
 				m_OrangeGhost->SetEaten();
 				m_Player->EatenGhost();
 			}
 			else
 			{
-				INFO("Collided with Orange ghost at {} and lost a life", position);
 				m_Player->LooseALife();
 			}
 		}
