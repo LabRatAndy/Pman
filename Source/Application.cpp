@@ -104,7 +104,7 @@ namespace Pman
 		ypos = ypos + TEXTBOXPADDING;
 		m_Renderer->RenderText("Game over!", xpos, ypos, FONTSIZE, FONTSPACING, WHITE);
 		ypos = ypos + gameoversize.Y;
-		m_Renderer->RenderText("Press space to play again!", xpos, ypos, FONTSIZE, FONTSPACING, WHITE);
+		m_Renderer->RenderText("Press Enter to play again!", xpos, ypos, FONTSIZE, FONTSPACING, WHITE);
 		m_Renderer->EndFrame();
 	}
 	void Application::ResetLevel()
