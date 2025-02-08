@@ -54,7 +54,6 @@ namespace Pman
 		void RenderSprite(const Sprite* sprite, uint32_t xpos, uint32_t ypos, uint32_t tilesize);
 		void RenderRectangle(uint32_t xpos, uint32_t ypos, uint32_t tilesize, Vec4<uint8_t> colour);
 		void RenderRectangle(uint32_t xpos, uint32_t ypos, uint32_t width, uint32_t height, Vec4<uint8_t> colour);
-		void RenderTest();
 		void RenderGridLines(uint32_t tilesize);
 		void RenderScore(const uint32_t score);
 		void RenderPlayerLives(const uint32_t playerlives);

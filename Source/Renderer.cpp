@@ -27,9 +27,8 @@
 
 #include <raylib.h>
 
-#include <iostream>
 #include <string>
-#include <format>
+
 
 namespace Pman
 {
@@ -79,10 +78,6 @@ namespace Pman
 	void Renderer::RenderRectangle(uint32_t xpos, uint32_t ypos, uint32_t width, uint32_t height, Vec4<uint8_t> colour)
 	{
 		DrawRectangle(xpos, ypos, width, height, { colour.X,colour.Y,colour.Z,colour.W });
-	}
-	void Renderer::RenderTest()
-	{
-		DrawText("Hello", 10, 10, 20, RED);
 	}
 	void Renderer::Clear(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 	{
