@@ -38,15 +38,6 @@ namespace Pman
 		uint32_t LevelWidth = 0;
 		uint32_t LevelHeight = 0;
 		Level* LevelCallback = nullptr;
-
-		constexpr uint32_t GetPixelWidth()
-		{
-			return LevelWidth * TileSize;
-		}
-		constexpr uint32_t GetPixelHeight()
-		{
-			return LevelHeight * TileSize;
-		}
 	};
 
 	enum class PlayerStatus

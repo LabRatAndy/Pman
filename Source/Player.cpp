@@ -29,7 +29,6 @@
 #include "Window.h"
 
 
-#include <iostream>
 namespace Pman
 {
 	

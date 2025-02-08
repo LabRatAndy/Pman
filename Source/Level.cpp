@@ -287,7 +287,6 @@ namespace Pman
 				
 			}
 		}
-		//ProcessRectangles();
 		ProcessAdjacentTiles();
 	}
 	void Level::OnUpdate(float ts)
