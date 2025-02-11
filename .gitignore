@@ -5,6 +5,7 @@
 
 premake5.exe
 *.old
+*.sln
 bin/
 bin-int/
 PmanTest/
