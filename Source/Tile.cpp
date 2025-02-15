@@ -24,7 +24,7 @@
 
 namespace Pman
 {
-	Tile::Tile(const TileSpecification& spec) : m_TileSize(spec.TileSize), m_Type(spec.Type), m_XPosition(spec.XPosition), m_YPosition(spec.YPosition), m_Sprite(spec.Texture)
+	Tile::Tile(const TileSpecification& spec_) : m_TileSize(spec_.TileSize), m_Type(spec_.Type), m_XPosition(spec_.XPosition), m_YPosition(spec_.YPosition), m_Sprite(spec_.Texture)
 	{
 
 	}
@@ -43,11 +43,11 @@ namespace Pman
 			return;
 		m_Type = TileType::Empty;
 	}
-	void Tile::SetAdjacentTile(const int32_t first, const int32_t second, const int32_t third, const int32_t fourth)
+	void Tile::SetAdjacentTile(const int32_t first_, const int32_t second_, const int32_t third_, const int32_t fourth_)
 	{
-		m_AdjacentTiles[0] = first;
-		m_AdjacentTiles[1] = second;
-		m_AdjacentTiles[2] = third;
-		m_AdjacentTiles[3] = fourth;
+		m_AdjacentTiles[0] = first_;
+		m_AdjacentTiles[1] = second_;
+		m_AdjacentTiles[2] = third_;
+		m_AdjacentTiles[3] = fourth_;
 	}
 }

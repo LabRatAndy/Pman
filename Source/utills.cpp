@@ -29,23 +29,23 @@
 
 namespace Pman
 {
-	size_t GetTileArrayIndexofTile(uint32_t x, uint32_t y, uint32_t levelwidth)
+	size_t GetTileArrayIndexofTile(uint32_t x_, uint32_t y_, uint32_t level_width)
 	{
-		return (y * levelwidth) + x;
+		return (y_ * level_width) + x_;
 	}
-	uint32_t GetTileIndex(const Vec2<int32_t>& tile, uint32_t levelwidth)
+	uint32_t GetTileIndex(const Vec2<int32_t>& tile_, uint32_t level_width)
 	{
-		ASSERT((tile.X >= 0), "Invalid tile position");
-		ASSERT((tile.Y >= 0), "Invalid tile position");
-		return (tile.Y * levelwidth) + tile.X;
+		ASSERT((tile_.X >= 0), "Invalid tile position");
+		ASSERT((tile_.Y >= 0), "Invalid tile position");
+		return (tile_.Y * level_width) + tile_.X;
 	}
-	void SetTileCoordsFromOriginAndPixelPosition(Vec2<int32_t>& tile, const Vec2<int32_t>& pixelposition, const uint32_t tilesize)
+	void SetTileCoordsFromOriginAndPixelPosition(Vec2<int32_t>& tile_, const Vec2<int32_t>& pixel_position, const uint32_t tile_size)
 	{
-		int32_t x = static_cast<int32_t>(std::floor((pixelposition.X + tilesize / 2) / tilesize));
-		int32_t y = static_cast<int32_t>(std::floor((pixelposition.Y + tilesize / 2) / tilesize));
+		int32_t x = static_cast<int32_t>(std::floor((pixel_position.X + tile_size / 2) / tile_size));
+		int32_t y = static_cast<int32_t>(std::floor((pixel_position.Y + tile_size / 2) / tile_size));
 		x = std::clamp(x, 0, 20);	//ensure that we don't go out of bounds 
 		y = std::clamp(y, 0, 20);
-		tile.X = x;
-		tile.Y = y;
+		tile_.X = x;
+		tile_.Y = y;
 	}
 }

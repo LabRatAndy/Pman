@@ -37,7 +37,7 @@ namespace Pman
 	constexpr Vec4<uint8_t> RED = { 250,50,50,255 };
 	constexpr Vec4<uint8_t> REDTRANSPARENT = { 250,50,50,175 };
 
-	Application::Application(const ApplicationSpecification& spec) : m_Specification(spec), m_Renderer(new Renderer(spec.TileSize* spec.TilesWide, spec.TileSize* (spec.TilesHigh + spec.TextTilesHigh), spec.TileSize* spec.TilesHigh))
+	Application::Application(const ApplicationSpecification& spec_) : m_Specification(spec_), m_Renderer(new Renderer(spec_.TileSize* spec_.TilesWide, spec_.TileSize* (spec_.TilesHigh + spec_.TextTilesHigh), spec_.TileSize* spec_.TilesHigh))
 	{
 		s_Instance = this;
 	}
@@ -47,6 +47,9 @@ namespace Pman
 		delete m_Renderer;
 		delete m_Window;
 	}
+	/// <summary>
+	/// contains the main game loop code
+	/// </summary>
 	void Application::Run()
 	{
 		WindowSpecification winspec{};

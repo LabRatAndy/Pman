@@ -48,7 +48,7 @@ namespace Pman
 	class Tile
 	{
 	public:
-		Tile(const TileSpecification& spec);
+		Tile(const TileSpecification& spec_);
 		~Tile() = default; //spites are cleaned up by the renderer!
 
 		void CollectGem();
@@ -66,7 +66,7 @@ namespace Pman
 		Sprite* GetSprite() const { return m_Sprite; }
 
 		const std::array<int32_t, 4>& GetAdjacentTile() const { return m_AdjacentTiles; }
-		void SetAdjacentTile(const int32_t first, const int32_t second, const int32_t third, const int32_t fourth);
+		void SetAdjacentTile(const int32_t first_, const int32_t second_, const int32_t third_, const int32_t fourth_);
 
 	private:
 		TileType m_Type = TileType::Invaild;

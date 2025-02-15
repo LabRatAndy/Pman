@@ -41,7 +41,7 @@ namespace Pman
 	class Application
 	{
 	public:
-		Application(const ApplicationSpecification& spec = ApplicationSpecification());
+		Application(const ApplicationSpecification& spec_ = ApplicationSpecification());
 		~Application();
 
 		void Run();

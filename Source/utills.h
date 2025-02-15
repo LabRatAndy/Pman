@@ -27,11 +27,11 @@
 namespace Pman
 {
 
-	size_t GetTileArrayIndexofTile(uint32_t x, uint32_t y, uint32_t levelwidth);
+	size_t GetTileArrayIndexofTile(uint32_t x_, uint32_t y_, uint32_t level_width);
 
-	uint32_t GetTileIndex(const Vec2<int32_t>& tile, uint32_t levelwidth);
+	uint32_t GetTileIndex(const Vec2<int32_t>& tile_, uint32_t level_width);
 
-	void SetTileCoordsFromOriginAndPixelPosition(Vec2<int32_t>& tile, const Vec2<int32_t>& pixelposition, const uint32_t tilesize);
+	void SetTileCoordsFromOriginAndPixelPosition(Vec2<int32_t>& tile_, const Vec2<int32_t>& pixel_position, const uint32_t tile_size);
 
 
 }

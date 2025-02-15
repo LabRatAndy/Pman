@@ -25,48 +25,48 @@
 #include <raylib.h>
 namespace Pman
 {
-	Window::Window(const WindowSpecification& spec)
+	Window::Window(const WindowSpecification& spec_)
 	{
-		InitWindow(spec.Width, spec.Height, spec.WindowTitle.c_str());
+		::InitWindow(spec_.Width, spec_.Height, spec_.WindowTitle.c_str());
 	}
 	Window::~Window()
 	{
-		CloseWindow();
+		::CloseWindow();
 	}
-	void Window::ChangeWindowSize(uint32_t newwidth, uint32_t newheight) 
+	void Window::ChangeWindowSize(uint32_t new_width, uint32_t new_height) 
 	{
-		SetWindowSize(newwidth, newheight);
+		::SetWindowSize(new_width, new_height);
 	}
 	bool Window::ShouldWindowClose() const
 	{
-		return WindowShouldClose();
+		return ::WindowShouldClose();
 	}
 	float Window::GetTimeDelta() const
 	{
-		return GetFrameTime();
+		return ::GetFrameTime();
 	}
 	double Window::GetAbsoluteTime() const
 	{
-		return GetTime();
+		return ::GetTime();
 	}
-	bool Window::GetKeyDown(Key key) const
+	bool Window::GetKeyDown(Key key_) const
 	{
-		return IsKeyDown(static_cast<int>(key));
+		return ::IsKeyDown(static_cast<int>(key_));
 	}
-	bool Window::GetKeyPressed(Key key) const
+	bool Window::GetKeyPressed(Key key_) const
 	{
-		return IsKeyPressed(static_cast<int>(key));
+		return ::IsKeyPressed(static_cast<int>(key_));
 	}
-	bool Window::GetKeyPressedRepeat(Key key) const
+	bool Window::GetKeyPressedRepeat(Key key_) const
 	{
-		return IsKeyPressedRepeat(static_cast<int>(key));
+		return ::IsKeyPressedRepeat(static_cast<int>(key_));
 	}
-	bool Window::GetKeyRelease(Key key) const
+	bool Window::GetKeyRelease(Key key_) const
 	{
-		return IsKeyReleased(static_cast<int>(key));
+		return ::IsKeyReleased(static_cast<int>(key_));
 	}
-	bool Window::GetKeyUP(Key key) const
+	bool Window::GetKeyUP(Key key_) const
 	{
-		return IsKeyUp(static_cast<int>(key));
+		return ::IsKeyUp(static_cast<int>(key_));
 	}
 }
