@@ -156,6 +156,7 @@ namespace Pman
 				}
 				case '0': //red ghost
 				{
+					ASSERT((m_RedGhost == nullptr), "Can only have 1 of each type of ghost");
 					GhostSpecification gspec{};
 					gspec.MainSprite = m_RedGhostSprite;
 					gspec.BlueSprite = m_BlueGhostSprite;
@@ -177,6 +178,7 @@ namespace Pman
 					break;
 				case '1': //pink ghost
 				{
+					ASSERT((m_PinkGhost == nullptr), "Can only have 1 of each type of ghost");
 					GhostSpecification gspec{};
 					gspec.MainSprite = m_PinkGhostSprite;
 					gspec.BlueSprite = m_BlueGhostSprite;
@@ -198,6 +200,7 @@ namespace Pman
 					break;
 				case '2': //cyan ghost
 				{
+					ASSERT((m_CyanGhost == nullptr), "Can only have 1 of each type of ghost");
 					GhostSpecification gspec{};
 					gspec.MainSprite = m_CyanGhostSprite;
 					gspec.BlueSprite = m_BlueGhostSprite;
@@ -219,6 +222,7 @@ namespace Pman
 					break;
 				case '3': //orange ghost
 				{
+					ASSERT((m_OrangeGhost == nullptr), "Can only have 1 of each type of ghost");
 					GhostSpecification gspec{};
 					gspec.MainSprite = m_OrangeGhostSprite;
 					gspec.BlueSprite = m_BlueGhostSprite;
