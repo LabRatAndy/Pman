@@ -71,10 +71,10 @@ namespace Pman
 	class Ghost
 	{
 	public:
-		Ghost(const GhostSpecification& spec);
+		Ghost(const GhostSpecification& spec_);
 		~Ghost();
 
-		void OnUpdate(float ts);
+		void OnUpdate(float time_step);
 		void OnRender();
 
 		void StartGame();
@@ -106,7 +106,7 @@ namespace Pman
 		bool m_SafeToModeSwitchY = false;
 
 		void UpdateTarget();
-		void FindPath(const Vec2<int32_t>& tile);
-		bool TileIsAbleToMoveTo(const Vec2<int32_t>& target) const;
+		void FindPath(const Vec2<int32_t>& start_tile);
+		bool TileIsAbleToMoveTo(const Vec2<int32_t>& target_) const;
 	};
 }

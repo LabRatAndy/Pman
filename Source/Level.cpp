@@ -32,18 +32,18 @@
 namespace Pman
 {
 
-	static bool CheckCollision(const Rect<int32_t>& player, const Rect<int32_t>& tile)
+	static bool CheckCollision(const Rect<int32_t>& player_, const Rect<int32_t>& tile_)
 	{
-		return !(player.Right <= tile.Left || player.Left >= tile.Right || player.Bottom <= tile.Top || player.Top >= tile.Bottom);
+		return !(player_.Right <= tile_.Left || player_.Left >= tile_.Right || player_.Bottom <= tile_.Top || player_.Top >= tile_.Bottom);
 	}
-	static void GetGhostRectangle(Rect<int32_t>& rect, const Vec2<int32_t>& ghostposition, const int32_t tilesize)
+	static void GetGhostRectangle(Rect<int32_t>& rect_, const Vec2<int32_t>& ghost_position, const int32_t tile_size)
 	{
-		rect.Left = ghostposition.X;
-		rect.Right = ghostposition.X + tilesize;
-		rect.Top = ghostposition.Y;
-		rect.Bottom = ghostposition.Y + tilesize;
+		rect_.Left = ghost_position.X;
+		rect_.Right = ghost_position.X + tile_size;
+		rect_.Top = ghost_position.Y;
+		rect_.Bottom = ghost_position.Y + tile_size;
 	}
-	Level::Level(const uint32_t tilesize) : m_TileSize(tilesize)
+	Level::Level(const uint32_t tile_size) : m_TileSize(tile_size)
 	{
 
 	}
@@ -67,10 +67,10 @@ namespace Pman
 		delete m_GemSprite;
 	}
 
-	void Level::LoadLevel(const std::vector<std::string>& leveldata)
+	void Level::LoadLevel(const std::vector<std::string>& level_data)
 	{
 		ASSERT(m_TileSize, "Tilesize cannot be 0!");
-		ASSERT(leveldata.size() != 0, "Level data cannot be empty!");
+		ASSERT(level_data.size() != 0, "Level data cannot be empty!");
 
 		//make sure the sprites are loaded 
 		Renderer& renderer = Application::Get().GetRenderer();
@@ -95,8 +95,8 @@ namespace Pman
 
 		m_Tiles.clear();
 		//workout size of level
-		uint32_t rows = (uint32_t)leveldata.size();
-		uint32_t columns = (uint32_t)leveldata[0].length(); //all rows must be this length or we will assert
+		uint32_t rows = (uint32_t)level_data.size();
+		uint32_t columns = (uint32_t)level_data[0].length(); //all rows must be this length or we will assert
 		m_LevelHeight = rows;
 		m_LevelWidth = columns;
 		m_Tiles.reserve(m_LevelWidth * m_LevelHeight);
@@ -104,13 +104,13 @@ namespace Pman
 		
 		for (size_t row = 0; row < rows; row++)
 		{
-			ASSERT((leveldata[row].length() == columns), "All rows must be the same length as the first");
+			ASSERT((level_data[row].length() == columns), "All rows must be the same length as the first");
 			for (size_t column = 0; column < columns; column++)
 			{
 				ASSERT((tilecount < rows * columns), "Error !!!! Too many tiles have been processed!");
 				auto it = m_Tiles.begin() + tilecount;
 							
-				switch (leveldata[row][column])
+				switch (level_data[row][column])
 				{
 				case '#': //wall
 				{
@@ -289,13 +289,13 @@ namespace Pman
 		}
 		ProcessAdjacentTiles();
 	}
-	void Level::OnUpdate(float ts)
+	void Level::OnUpdate(float time_step)
 	{
-		m_Player->OnUpdate(ts);
-		m_CyanGhost->OnUpdate(ts);
-		m_RedGhost->OnUpdate(ts);
-		m_PinkGhost->OnUpdate(ts);
-		m_OrangeGhost->OnUpdate(ts);
+		m_Player->OnUpdate(time_step);
+		m_CyanGhost->OnUpdate(time_step);
+		m_RedGhost->OnUpdate(time_step);
+		m_PinkGhost->OnUpdate(time_step);
+		m_OrangeGhost->OnUpdate(time_step);
 	}
 	void Level::OnRender()
 	{
@@ -323,10 +323,10 @@ namespace Pman
 	/// <param name="direction">The direction vector -1 is up/ left and 1 is right/down, 0 no movement in that axis</param>
 	/// <param name="canusedoor">is able to use the ghost house door</param>
 	/// <returns>true on collision with wall</returns>
-	bool Level::CollideWithWall(const Vec2<int32_t>& position, const Vec2<int32_t>& direction) const
+	bool Level::CollideWithWall(const Vec2<int32_t>& position_, const Vec2<int32_t>& direction_) const
 	{
 		// Get the player's bounding box in world space
-		Rect<int32_t> playerrect = { position.X,position.X + m_TileSize,position.Y,position.Y + m_TileSize };
+		Rect<int32_t> playerrect = { position_.X,position_.X + m_TileSize,position_.Y,position_.Y + m_TileSize };
 		
 		// Calculate the tile coordinates the player is interacting with
 		//Reduce tile area that player interacts with by 4 pixels in each direction 2 on each side! This is to make it easier to get round the map. 
@@ -351,7 +351,7 @@ namespace Pman
 						//check collision left	
 						if (playerrect.Left < tilerect.Right)
 						{
-							if (direction.X == -1)
+							if (direction_.X == -1)
 							{
 								retval = true;
 							}
@@ -359,7 +359,7 @@ namespace Pman
 						//check collision right
 						if (playerrect.Right > tilerect.Left)
 						{
-							if (direction.X == 1)
+							if (direction_.X == 1)
 							{
 								retval = true;
 							}
@@ -367,7 +367,7 @@ namespace Pman
 						//check collision above
 						if (playerrect.Top < tilerect.Bottom)
 						{
-							if (direction.Y == -1)
+							if (direction_.Y == -1)
 							{
 								retval = true;
 							}
@@ -375,7 +375,7 @@ namespace Pman
 						//check collision below
 						if (playerrect.Bottom > tilerect.Top)
 						{
-							if (direction.Y == 1)
+							if (direction_.Y == 1)
 							{
 								retval = true;
 							}
@@ -387,9 +387,9 @@ namespace Pman
 		return retval;
 	}
 	
-	bool Level::CollectGem(const Vec2<int32_t>& position)
+	bool Level::CollectGem(const Vec2<int32_t>& position_)
 	{
-		size_t tileindex = GetTileArrayIndexofTile(position.X, position.Y, m_LevelWidth);
+		size_t tileindex = GetTileArrayIndexofTile(position_.X, position_.Y, m_LevelWidth);
 		if (m_Tiles[tileindex].GetTileType() == TileType::Gem)
 		{
 			m_Tiles[tileindex].CollectGem();
@@ -397,9 +397,9 @@ namespace Pman
 		}
 		return false;
 	}
-	bool Level::CollectPowerPellet(const Vec2<int32_t>& position)
+	bool Level::CollectPowerPellet(const Vec2<int32_t>& position_)
 	{
-		size_t tileindex = GetTileArrayIndexofTile(position.X, position.Y, m_LevelWidth);
+		size_t tileindex = GetTileArrayIndexofTile(position_.X, position_.Y, m_LevelWidth);
 		if (m_Tiles[tileindex].GetTileType() == TileType::PowerPellet)
 		{
 			m_Tiles[tileindex].CollectPowerPellet();
@@ -470,10 +470,10 @@ namespace Pman
 
 
 	}
-	void Level::CollideWithGhost(const Vec2<int32_t>& position) const
+	void Level::CollideWithGhost(const Vec2<int32_t>& position_) const
 	{
 		//calculate player and Ghost rectangles
-		Rect<int32_t> playerrect = { position.X, position.X + m_TileSize,position.Y,position.Y + m_TileSize };
+		Rect<int32_t> playerrect = { position_.X, position_.X + m_TileSize,position_.Y,position_.Y + m_TileSize };
 		Rect<int32_t> redghostrect = { 0,0,0,0 };
 		Rect<int32_t> cyanghostrect = { 0,0,0,0 };
 		Rect<int32_t> pinkghostrect = { 0,0,0,0 };

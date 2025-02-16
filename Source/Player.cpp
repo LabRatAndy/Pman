@@ -32,7 +32,7 @@
 namespace Pman
 {
 	
-	Player::Player(const PlayerSpecification& spec) : m_Specification(spec), m_Lives(spec.PlayerLives), m_Position(spec.InitialPosition), m_Status(PlayerStatus::NotStarted), m_PixelPosition({ static_cast<int32_t>(spec.InitialPosition.X * spec.TileSize),static_cast<int32_t>(spec.InitialPosition.Y * spec.TileSize) })
+	Player::Player(const PlayerSpecification& spec_) : m_Specification(spec_), m_Lives(spec_.PlayerLives), m_Position(spec_.InitialPosition), m_Status(PlayerStatus::NotStarted), m_PixelPosition({ static_cast<int32_t>(spec_.InitialPosition.X * spec_.TileSize),static_cast<int32_t>(spec_.InitialPosition.Y * spec_.TileSize) })
 	{
 		SetTileCoordsFromOriginAndPixelPosition(m_Position, m_PixelPosition, m_Specification.TileSize);
 	}
@@ -46,7 +46,7 @@ namespace Pman
 		Application::Get().GetRenderer().RenderScore(m_Score);
 		Application::Get().GetRenderer().RenderPlayerLives(m_Lives);
 	}
-	void Player::OnUpdate(float ts)
+	void Player::OnUpdate(float time_step)
 	{
 		//check if we still have some lives left if not return
 		if (m_Lives == 0)
@@ -59,7 +59,7 @@ namespace Pman
 			{
 				m_Status = PlayerStatus::Running;
 			}
-			m_LostLifeTimer = m_LostLifeTimer - ts;
+			m_LostLifeTimer = m_LostLifeTimer - time_step;
 		}
 		//check if collecting a gem, power pellet or hit a ghost
 		if (m_Specification.LevelCallback->CollectGem(m_Position))
@@ -96,8 +96,8 @@ namespace Pman
 		}
 		if (m_Direction.X != 0 || m_Direction.Y != 0)
 		{
-			float newXposition = m_PixelPosition.X + (m_Direction.X * (m_Specification.MoveSpeed * ts));
-			float newYposition = m_PixelPosition.Y + (m_Direction.Y * (m_Specification.MoveSpeed * ts));
+			float newXposition = m_PixelPosition.X + (m_Direction.X * (m_Specification.MoveSpeed * time_step));
+			float newYposition = m_PixelPosition.Y + (m_Direction.Y * (m_Specification.MoveSpeed * time_step));
 			Vec2<int32_t> newpos = { 0,0 };
 			if (m_Direction.X == -1)
 			{

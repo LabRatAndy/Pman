@@ -33,11 +33,11 @@
 
 namespace Pman
 {
-	bool Ghost::TileIsAbleToMoveTo(const Vec2<int32_t>& target) const
+	bool Ghost::TileIsAbleToMoveTo(const Vec2<int32_t>& target_) const
 	{
-		if (target.X >= 0 && target.X < m_Specification.LevelCallback->GetLevelWidthInTiles() && target.Y >= 0 && target.Y < m_Specification.LevelCallback->GetLevelHeightInTiles())
+		if (target_.X >= 0 && target_.X < m_Specification.LevelCallback->GetLevelWidthInTiles() && target_.Y >= 0 && target_.Y < m_Specification.LevelCallback->GetLevelHeightInTiles())
 		{
-			const Tile& tile = m_Specification.LevelCallback->GetTile(GetTileIndex(target, m_Specification.LevelCallback->GetLevelWidthInTiles()));
+			const Tile& tile = m_Specification.LevelCallback->GetTile(GetTileIndex(target_, m_Specification.LevelCallback->GetLevelWidthInTiles()));
 			if (tile.GetTileType() == TileType::Gem || tile.GetTileType() == TileType::PowerPellet || tile.GetTileType() == TileType::Empty)
 			{
 				return true;
@@ -46,13 +46,13 @@ namespace Pman
 		return false;
 	}
 	
-	Ghost::Ghost(const GhostSpecification& spec) : m_Status(GhostStatus::NotStarted), m_Mode(GhostMode::Scatter), m_Specification(spec), m_Position(spec.InitialPosition), m_PixelPosition({ static_cast<int32_t>(spec.InitialPosition.X * spec.TileSize),static_cast<int32_t>(spec.InitialPosition.Y * spec.TileSize) })
+	Ghost::Ghost(const GhostSpecification& spec_) : m_Status(GhostStatus::NotStarted), m_Mode(GhostMode::Scatter), m_Specification(spec_), m_Position(spec_.InitialPosition), m_PixelPosition({ static_cast<int32_t>(spec_.InitialPosition.X * spec_.TileSize),static_cast<int32_t>(spec_.InitialPosition.Y * spec_.TileSize) })
 	{
 	}
 	Ghost::~Ghost()
 	{
 	}
-	void Ghost::OnUpdate(float ts)
+	void Ghost::OnUpdate(float time_step)
 	{
 		if (m_Status == GhostStatus::NotStarted) //the game is not running!
 			return;
@@ -64,7 +64,7 @@ namespace Pman
 				// ghost back to normal
 				m_Status = GhostStatus::Running;
 			}
-			m_FrightenedTimer -= ts;
+			m_FrightenedTimer -= time_step;
 			
 		}
 		UpdateTarget();
@@ -72,9 +72,9 @@ namespace Pman
 		ASSERT((m_Target.Y <= m_Specification.LevelCallback->GetLevelHeightInTiles()), "Error invalid target height")
 		//work out direction to take
 		{
-			if (ts < 0.001)
+			if (time_step < 0.001)
 			{
-				ts = 0.0166668f;
+				time_step = 0.0166668f;
 			}
 			FindPath(m_Position);
 			const auto& tile = m_Specification.LevelCallback->GetTile(m_TileToMoveToIndex);
@@ -140,16 +140,16 @@ namespace Pman
 		}
 		{
 			//now move the ghost 
-			m_PixelPosition.X = m_PixelPosition.X + static_cast<int32_t>(m_Direction.X * (m_Specification.MoveSpeed * ts));
-			m_PixelPosition.Y = m_PixelPosition.Y + static_cast<int32_t>(m_Direction.Y * (m_Specification.MoveSpeed * ts));
+			m_PixelPosition.X = m_PixelPosition.X + static_cast<int32_t>(m_Direction.X * (m_Specification.MoveSpeed * time_step));
+			m_PixelPosition.Y = m_PixelPosition.Y + static_cast<int32_t>(m_Direction.Y * (m_Specification.MoveSpeed * time_step));
 			//check for going though the tunnel from 1 size to the other
 			if (m_PixelPosition.X <= 0)
 			{
-				m_PixelPosition.X = (static_cast<int32_t>(m_Specification.MoveSpeed * ts) - m_Specification.LevelCallback->GetAbsoluteWidth());
+				m_PixelPosition.X = (static_cast<int32_t>(m_Specification.MoveSpeed * time_step) - m_Specification.LevelCallback->GetAbsoluteWidth());
 			}
 			else if (m_PixelPosition.X >= m_Specification.LevelCallback->GetAbsoluteWidth())
 			{
-				m_PixelPosition.X = 0 + static_cast<int32_t>(m_Specification.MoveSpeed * ts);
+				m_PixelPosition.X = 0 + static_cast<int32_t>(m_Specification.MoveSpeed * time_step);
 			}
 			//update position in tiles
 	
@@ -196,7 +196,7 @@ namespace Pman
 				}
 				m_ModeTimerUp = false;
 			}
-			m_ModeTimer += ts;
+			m_ModeTimer += time_step;
 		}
 
 	}
@@ -343,21 +343,21 @@ namespace Pman
 	}
 
 
-	void Ghost::FindPath(const Vec2<int32_t>& starttile)
+	void Ghost::FindPath(const Vec2<int32_t>& start_tile)
 	{
 		//check we are not already at the target
-		if (GetTileIndex(starttile, m_Specification.LevelCallback->GetLevelWidthInTiles()) == GetTileIndex(m_Target, m_Specification.LevelCallback->GetLevelWidthInTiles()))
+		if (GetTileIndex(start_tile, m_Specification.LevelCallback->GetLevelWidthInTiles()) == GetTileIndex(m_Target, m_Specification.LevelCallback->GetLevelWidthInTiles()))
 		{
 			//we are on the target tile so do nothing
-			m_TileToMoveToIndex = GetTileIndex(starttile, m_Specification.LevelCallback->GetLevelWidthInTiles());
+			m_TileToMoveToIndex = GetTileIndex(start_tile, m_Specification.LevelCallback->GetLevelWidthInTiles());
 			return;
 		}
 		//setup for breadth first search
 		size_t numberoftiles = m_Specification.LevelCallback->GetLevelWidthInTiles() * m_Specification.LevelCallback->GetLevelHeightInTiles();
 		std::queue<uint32_t> queue;
-		queue.push(GetTileIndex(starttile, m_Specification.LevelCallback->GetLevelWidthInTiles()));
+		queue.push(GetTileIndex(start_tile, m_Specification.LevelCallback->GetLevelWidthInTiles()));
 		std::vector<bool> visited(numberoftiles, false);
-		visited[GetTileIndex(starttile, m_Specification.LevelCallback->GetLevelWidthInTiles())] = true;
+		visited[GetTileIndex(start_tile, m_Specification.LevelCallback->GetLevelWidthInTiles())] = true;
 		std::vector<int32_t>prev(numberoftiles, -1);
 
 		//search
@@ -390,7 +390,7 @@ namespace Pman
 		
 		//check that the path does actually start at the start point
 
-		if (pathtotarget[0] == GetTileIndex(starttile, m_Specification.LevelCallback->GetLevelWidthInTiles()))
+		if (pathtotarget[0] == GetTileIndex(start_tile, m_Specification.LevelCallback->GetLevelWidthInTiles()))
 		{
 			m_TileToMoveToIndex = pathtotarget[1];
 		}

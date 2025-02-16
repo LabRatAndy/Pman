@@ -31,7 +31,7 @@
 namespace Pman
 {
 	
-	static std::vector<std::string> s_DefaultLevel =
+	static const std::vector<std::string> s_DefaultLevel =
 	{
 		"i###################i",
 		"i#........#........#i",
@@ -58,12 +58,12 @@ namespace Pman
 	class Level
 	{
 	public:
-		Level(const uint32_t tilesize);
+		Level(const uint32_t tile_size);
 		~Level();
 
-		void LoadLevel(const std::vector<std::string>& leveldata = s_DefaultLevel);
+		void LoadLevel(const std::vector<std::string>& level_data = s_DefaultLevel);
 
-		void OnUpdate(float ts);
+		void OnUpdate(float time_step);
 		void OnRender();
 
 		void StartGame();
@@ -78,14 +78,14 @@ namespace Pman
 		int32_t GetAbsoluteHeight() const { return m_LevelHeight * m_TileSize; }
 
 		// these will likely need to be reviewed
-		bool CollideWithWall(const Vec2<int32_t>& position, const Vec2<int32_t>& direction) const;
-		void CollideWithGhost(const Vec2<int32_t>& position) const;
-		bool CollectGem(const Vec2<int32_t>& position);
-		bool CollectPowerPellet(const Vec2<int32_t>& position);
+		bool CollideWithWall(const Vec2<int32_t>& position_, const Vec2<int32_t>& direction_) const;
+		void CollideWithGhost(const Vec2<int32_t>& position_) const;
+		bool CollectGem(const Vec2<int32_t>& position_);
+		bool CollectPowerPellet(const Vec2<int32_t>& position_);
 		
 
-		const std::array<int32_t, 4>& GetAdjacentTileList(size_t tile) const { return m_Tiles[tile].GetAdjacentTile(); }
-		const Tile& GetTile(const size_t index) const { return m_Tiles[index]; }
+		const std::array<int32_t, 4>& GetAdjacentTileList(size_t tile_) const { return m_Tiles[tile_].GetAdjacentTile(); }
+		const Tile& GetTile(const size_t index_) const { return m_Tiles[index_]; }
 
 		Vec2<int32_t> GetPacmanPosition() const
 		{

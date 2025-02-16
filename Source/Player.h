@@ -51,10 +51,10 @@ namespace Pman
 	class Player
 	{
 	public:
-		Player(const PlayerSpecification& spec);
+		Player(const PlayerSpecification& spec_);
 		~Player();
 
-		void OnUpdate(float ts);
+		void OnUpdate(float time_step);
 		void OnRender();
 
 		void StartGame();
